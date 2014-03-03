@@ -1,5 +1,5 @@
 {
-    "name": "andizzle/rest",
+    "name": "andizzle/rest-framework",
     "description": "A simple restful framework for laravel.",
     "keywords": ["laravel", "laravel4", "restful", "rest", "api"],
     "authors": [
@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.3.0"
     },
     "require-dev": {
         "mockery/mockery": "dev-master@dev",
