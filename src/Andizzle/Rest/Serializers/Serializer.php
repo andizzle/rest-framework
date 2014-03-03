@@ -190,7 +190,7 @@ class Serializer implements SerializerInterface {
                 if(!in_array($key, array('people', 'men', 'women', 'children')))
                     $key = str_plural($key);
 
-                $item_relation = $item->getRelation($serializable);
+                $item_relation = $item->{$serializable};
                 if( $item_relation instanceof Collection )
                     $item_relation = $item_relation->take(Config::get('api.sideloads_limit'));
 
