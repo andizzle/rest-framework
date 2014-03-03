@@ -123,7 +123,7 @@ class RESTModel extends Model {
 
         if( $this->pivot ) {
 
-            $pivotPrefix =  str_singular(str_replace(array('user_', 'company_', 'availability_'), array(''), $this->pivot->getTable()));
+            $pivotPrefix =  str_singular(preg_replace('^(.*)_^', '', $this->pivot->getTable()));
 
             $pivotKeys = array($this->pivot->getKeyName(), $this->pivot->getForeignKey(), $this->pivot->getOtherKey());
 
