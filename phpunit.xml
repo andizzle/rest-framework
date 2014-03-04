@@ -15,4 +15,12 @@
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+             <directory>./src/Andizzle/Rest</directory>
+        </whitelist>
+    </filter>
+    <logging>
+	<log type="coverage-text" target="php://stdout" title="rest-framework" charset="UTF-8" yui="true" highlight="true" lowUpperBound="50" highLowerBound="90"/>
+    </logging>
 </phpunit>

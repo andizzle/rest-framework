@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Andizzle\Rest\RestServer;
 
+
 class RestServerTest extends PHPUnit_Framework_TestCase {
 
     public function tearDown() {
