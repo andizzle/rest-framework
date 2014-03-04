@@ -10,10 +10,6 @@ interface SerializerInterface {
 
     public function serialize(ArrayableInterface $instance, $root, $withRelations);
 
-    public function serializeRelations(ArrayableInterface $instance);
-
-    public function collectRelations(Collection $instance);
-
-    public function mergeRelations(array $result);
+    public function dehydrate(array $data);
 
 }
