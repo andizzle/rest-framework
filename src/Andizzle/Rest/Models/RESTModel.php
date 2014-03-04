@@ -13,12 +13,24 @@ use Andizzle\Rest\Relations\BelongsToManySelf;
 
 class RESTModel extends Model {
 
+    public $root = '';
     protected $sideLoads = array();
-    protected $sideLoadsLimit = 5;
 
     public function __construct(array $attributes = array()) {
+
         parent::__construct($attributes);
-        $this->sideLoadsLimit = Config::get('api.sideloads_limit');
+        if( !$this->root )
+            $this->root = $this->getRoot();
+
+    }
+
+    public function getRoot() {
+
+        if( $this->root )
+            return $this->root;
+
+        return str_plural(strtolower(class_basename(get_class($this))));
+
     }
 
     /**
