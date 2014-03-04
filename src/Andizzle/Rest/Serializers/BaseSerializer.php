@@ -43,11 +43,12 @@ class BaseSerializer extends Serializer implements SerializerInterface {
 
         } else {
 
+
+            $instance->load(array_merge($instance->getWith(), $instance->getSideLoads()));
+
             // Set visible relations to hidden
             if( !$withRelations )
                 $instance->setHidden(array_merge($instance->getHidden(), $instance->getSideLoads()));
-
-            $instance->load($instance->getWith());
 
         }
 
