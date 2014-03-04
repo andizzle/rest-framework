@@ -8,6 +8,12 @@ use Response;
 
 class RestServer {
 
+    /**
+     * Setup default output case.
+     *
+     * @param string $case
+     * @return void
+     */
     public function __construct($case = 'snakeCase') {
 
         $this->outputCase = $case;
@@ -77,7 +83,7 @@ class RestServer {
      * @param array $input
      * @return array
      */
-    public function snakeCaseInput(array $input) {
+    private function snakeCaseInput(array $input) {
 
         $convertedInput = array();
         foreach($input as $key => $value) {
@@ -101,7 +107,7 @@ class RestServer {
      * @param array $input
      * @return array
      */
-    public function camelCaseInput(array $input) {
+    private function camelCaseInput(array $input) {
 
         $convertedInput = array();
         foreach($input as $key => $value) {
@@ -126,7 +132,7 @@ class RestServer {
      * @param array $input
      * @return array
      */
-    public function studlyCaseInput(array $input) {
+    private function studlyCaseInput(array $input) {
 
         $convertedInput = array();
         foreach($input as $key => $value) {
