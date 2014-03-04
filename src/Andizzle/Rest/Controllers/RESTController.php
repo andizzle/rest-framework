@@ -15,14 +15,15 @@ use Illuminate\Database\Eloquent\Collection;
 abstract class RESTController extends Controller {
 
     protected $root = '';
-    protected $serializer = NULL;
+    protected $serializer = null;
+    protected $serialize_with_relation = true;
 
     protected $auth_filters = array();
     protected $request_filters = array(
         '@preprocessRequest'
     );
     protected $response_filters = array(
-        '@serializeResponse'
+        '@createResponse'
     );
 
     /**
@@ -84,10 +85,11 @@ abstract class RESTController extends Controller {
      * @param $response
      * @return void
      */
-    public function serializeResponse($route, $request, $response) {
+    public function createResponse($route, $request, $response) {
 
         $original_content = $response->getOriginalContent();
-        $response->setContent(Serializer::serialize($original_content, $this->root));
+        $result = Serializer::serialize($original_content, $this->root, $this->serialize_with_relation);
+        $response->setContent(Serializer::dehydrate($result));
 
     }
 
