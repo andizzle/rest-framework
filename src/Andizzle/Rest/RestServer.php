@@ -2,8 +2,9 @@
 
 namespace Andizzle\Rest;
 
-use Request;
-use Response;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
 
 
 class RestServer {
@@ -54,8 +55,9 @@ class RestServer {
     public function errorResponse($code, $message = '') {
 
         $error = array(
-            'status' => 'failed',
-            'message' => $message
+            'errors' => array(
+                $message
+            )
         );
         return Response::json($error, $code);
 
@@ -73,7 +75,7 @@ class RestServer {
         if( $case == null )
             $case = $this->outputCase;
 
-        return $this->{$this->outputCase . 'Input'}($input);
+        return $this->{$case . 'Input'}($input);
 
     }
 
