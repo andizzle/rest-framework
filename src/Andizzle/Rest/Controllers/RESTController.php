@@ -121,29 +121,6 @@ abstract class RESTController extends Controller {
     }
 
     /**
-     * Figure out the api prefix base on incoming request.
-     *
-     * @return string
-     */
-    public function getApiPrefix() {
-        $prefix = '';
-        $api_versions = Config::get('api.deprecated');
-        array_push($api_versions, Config::get('api.version'));
-
-        $segments = Request::segments();
-        foreach( $segments as $segment ) {
-
-            $prefix .= '/' . $segment;
-            if( in_array($segment, $api_versions) )
-                break;
-
-        }
-
-        return $prefix;
-
-    }
-
-    /**
      * Return an error response with code and content.
      *
      * @param int $code
