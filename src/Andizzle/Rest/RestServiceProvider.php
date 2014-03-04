@@ -17,7 +17,7 @@ class RestServiceProvider extends ServiceProvider {
 
     public function boot() {
 
-        $this->package('andizzle/rest', 'andizzle/rest');
+        $this->package('andizzle/rest-framework', 'andizzle/rest-framework');
 
     }
 
@@ -31,13 +31,13 @@ class RestServiceProvider extends ServiceProvider {
         $app = $this->app;
         $app['rest.server'] = $app->share(function ($app)
         {
-            $case = $app['config']['andizzle/rest::case'];
+            $case = $app['config']['andizzle/rest-framework::case'];
             return new RestServer($case);
         });
 
         $app['rest.serializer'] = $app->share(function ($app)
         {
-            $model = $app['config']['andizzle/rest::serializer.model'];
+            $model = $app['config']['andizzle/rest-framework::serializer.model'];
             return new $model;
         });
 
