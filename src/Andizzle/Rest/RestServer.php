@@ -2,6 +2,7 @@
 
 namespace Andizzle\Rest;
 
+use Request;
 use Response;
 
 
@@ -18,7 +19,7 @@ class RestServer {
      *
      * @return string
      */
-    private function getApiPrefix() {
+    public function getApiPrefix() {
 
         $prefix = '';
         $api_versions = Config::get('andizzle/rest::deprecated');

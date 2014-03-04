@@ -15,7 +15,7 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
     public function __construct() {
 
         $this->sideload_limit = Config::get('api.sideloads_limit');
-        $this->api_prefix = $this->getApiPrefix();
+        $this->api_prefix = REST::getApiPrefix();
 
     }
 
@@ -115,30 +115,5 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
         return $this->api_prefix . '/' . $root . '?' . $pk_field . '=' . implode(',', $ids);
 
     }
-
-
-    /**
-     * Figure out the api prefix base on incoming request.
-     *
-     * @return string
-     */
-    public function getApiPrefix() {
-        $prefix = '';
-        $api_versions = Config::get('api.deprecated');
-        array_push($api_versions, Config::get('api.version'));
-
-        $segments = Request::segments();
-        foreach( $segments as $segment ) {
-
-            $prefix .= '/' . $segment;
-            if( in_array($segment, $api_versions) )
-                break;
-
-        }
-
-        return $prefix;
-
-    }
-
 
 }
