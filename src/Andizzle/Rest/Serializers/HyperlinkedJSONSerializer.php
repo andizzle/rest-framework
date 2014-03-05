@@ -85,32 +85,11 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
 
         foreach($side_loads as $load) {
 
-            if($instance->{$load} instanceof Collection) {
-                // we build link to ids of a model.
-                // e.g, /api/v1/books?ids=1,2,3
-                $value = $instance->{$load}->take($this->page_limit);
+            if($instance->{$load} instanceof Collection && $this->isEmptyOrNull($instance))
+                continue;
 
-                if($this->isEmptyOrNull($value)) {
-                    $instance->__unset($load);
-                    continue;
-                }
-
-                $root = $value->first()->getRoot();
-                $pk_field = str_plural($value->first()->getKeyName());
-                $ids = $value->modelKeys();
-
-            } else {
-                // otherwise the result is an id. e.g: 2
-                if( $value = $instance->{$load} ) {
-                    $root = $value->getRoot();
-                    $pk_field = $value->getKeyName();
-                    $ids = array($value->getKey());
-                }
-
-            }
-
+            $links[$load] = $this->buildLink($instance->{$load});
             $instance->__unset($load);
-            $links[$load] = $this->buildLink($root, $pk_field, $ids);
 
         }
 
@@ -129,9 +108,31 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
      * @param array $ids
      * @return string
      */
-    public function buildLink($root, $pk_field, $ids) {
+    public function buildLink($instance) {
 
-        return $this->api_prefix . '/' . $root . '?' . $pk_field . '=' . implode(',', $ids);
+        $link = '';
+        $is_collection = true;
+
+        if($instance instanceof Collection) {
+
+            $instance = $instance->take($this->page_limit);
+
+        } else {
+
+            $collection = new Collection;
+            $instance = $collection->add($instance);
+            $is_collection = false;
+
+        }
+
+        $root = $instance->first()->getRoot();
+        $pk_field = str_plural($instance->first()->getKeyName());
+        $ids = $instance->modelKeys();
+
+        if( $is_collection )
+            return $this->api_prefix . '/' . $root . '?' . $pk_field . '=' . implode(',', $ids);
+
+        return $this->api_prefix . '/' . $root . '/' . implode(',', $ids);
 
     }
 

@@ -35,4 +35,14 @@ class HyperlinkedJSONSerializerTest extends PHPUnit_Framework_TestCase {
 
     }
 
+    public function testBuildLink() {
+        Config::shouldReceive('get')->with('andizzle/rest-framework::page_limit')->andReturn('5');
+        REST::shouldReceive('getApiPrefix')->andReturn('api/v1');
+        $serializer = new HyperlinkedJSONSerializer;
+        $fooobj = new RESTModelStub;
+        $fooobj->id = 1;
+        $fooobj->root = 'roots';
+        $this->assertEquals('api/v1/roots/1', $serializer->buildLink($fooobj));
+    }
+
 }
