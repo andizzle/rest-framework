@@ -15,7 +15,7 @@ class JSONSerializer extends BaseSerializer {
 
     public function __construct() {
 
-        $this->sideload_limit = Config::get('api.sideloads_limit');
+        $this->page_limit = Config::get('andizzle/rest-framework::page_limit');
 
     }
 
@@ -31,7 +31,7 @@ class JSONSerializer extends BaseSerializer {
         $relationship = array();
 
         if( $limit )
-            $this->sideload_limit = $limit;
+            $this->page_limit = $limit;
 
         $serialized_data = parent::serialize($instance, $root, $withRelations);
         $root = $this->getRoot($instance, $root);
@@ -71,7 +71,7 @@ class JSONSerializer extends BaseSerializer {
                 if($item->{$load} instanceof Collection)
                     // If is a collection then the result is a list of
                     // id. e.g: [1, 2, 3]
-                    $item->setRelation($load, Collection::make($item->{$load}->take($this->sideload_limit)->modelKeys()));
+                    $item->setRelation($load, Collection::make($item->{$load}->take($this->page_limit)->modelKeys()));
 
                 else
                     // otherwise the result is an id. e.g: 2
@@ -153,7 +153,7 @@ class JSONSerializer extends BaseSerializer {
                         $rel = new Collection;
                         $item_relation = $rel->add($item_relation);
                     } else {
-                        $item_relation = $item_relation->take($this->sideload_limit);
+                        $item_relation = $item_relation->take($this->page_limit);
                     }
 
                     if( array_key_exists($key, $sub_result) )

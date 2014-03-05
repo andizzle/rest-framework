@@ -2,11 +2,12 @@
 
 namespace Andizzle\Rest\Serializers;
 
-use REST;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Contracts\ArrayableInterface;
+use Andizzle\Rest\Facades\RestServerFacade as REST;
+
 
 class HyperlinkedJSONSerializer extends BaseSerializer {
 
@@ -14,7 +15,7 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
 
     public function __construct() {
 
-        $this->sideload_limit = Config::get('api.sideloads_limit');
+        $this->page_limit = Config::get('andizzle/rest-framework::page_limit');
         $this->api_prefix = REST::getApiPrefix();
 
     }
@@ -31,14 +32,13 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
         $relationship = array();
 
         if( $limit )
-            $this->sideload_limit = $limit;
+            $this->page_limit = $limit;
 
         $serialized_data = parent::serialize($instance, $root, $withRelations);
         $root = $this->getRoot($instance, $root);
 
-        if( $withRelations ) {
+        if( $withRelations )
             $serialized_data[$root] = $this->serializeKeys($instance)->toArray();
-        }
 
         return array_merge($serialized_data, $relationship);
 
@@ -71,7 +71,7 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
                 if($item->{$load} instanceof Collection) {
                     // we build link to ids of a model.
                     // e.g, /api/v1/books?ids=1,2,3
-                    $value = $item->{$load}->take($this->sideload_limit);
+                    $value = $item->{$load}->take($this->page_limit);
 
                     if($this->isEmptyOrNull($value)) {
                         $item->__unset($load);
@@ -93,7 +93,7 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
                 }
 
                 $item->__unset($load);
-                $links[$root] = $this->buildLink($root, $pk_field, $ids);
+                $links[$load] = $this->buildLink($root, $pk_field, $ids);
 
             }
 
