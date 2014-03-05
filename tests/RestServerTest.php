@@ -14,8 +14,8 @@ class RestServerTest extends PHPUnit_Framework_TestCase {
 
     public function testGetApiPrefix() {
 
-        Config::shouldReceive('get')->with('andizzle/rest::deprecated')->andReturn(array());
-        Config::shouldReceive('get')->with('andizzle/rest::version')->andReturn('v1');
+        Config::shouldReceive('get')->with('andizzle/rest-framework::deprecated')->andReturn(array());
+        Config::shouldReceive('get')->with('andizzle/rest-framework::version')->andReturn('v1');
         Request::shouldReceive('segments')->once()->andReturn(array('api', 'v1', 'test'));
         $server = new RestServer();
         $this->assertEquals($server->getApiPrefix(), '/api/v1');

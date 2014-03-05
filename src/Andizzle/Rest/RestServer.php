@@ -29,8 +29,8 @@ class RestServer {
     public function getApiPrefix() {
 
         $prefix = '';
-        $api_versions = Config::get('andizzle/rest::deprecated');
-        array_push($api_versions, Config::get('andizzle/rest::version'));
+        $api_versions = Config::get('andizzle/rest-framework::deprecated');
+        array_push($api_versions, Config::get('andizzle/rest-framework::version'));
 
         $segments = Request::segments();
         foreach( $segments as $segment ) {
