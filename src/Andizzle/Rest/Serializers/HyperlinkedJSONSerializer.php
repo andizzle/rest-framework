@@ -62,45 +62,7 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
 
         $instance->transform(function($item)
         {
-
-            $links = array();
-            $side_loads = $item->getSideLoads();
-
-            foreach($side_loads as $load) {
-
-                if($item->{$load} instanceof Collection) {
-                    // we build link to ids of a model.
-                    // e.g, /api/v1/books?ids=1,2,3
-                    $value = $item->{$load}->take($this->page_limit);
-
-                    if($this->isEmptyOrNull($value)) {
-                        $item->__unset($load);
-                        continue;
-                    }
-
-                    $root = $value->first()->getRoot();
-                    $pk_field = str_plural($value->first()->getKeyName());
-                    $ids = $value->modelKeys();
-
-                } else {
-                    // otherwise the result is an id. e.g: 2
-                    if( $value = $item->{$load} ) {
-                        $root = $value->getRoot();
-                        $pk_field = $value->getKeyName();
-                        $ids = array($value->getKey());
-                    }
-
-                }
-
-                $item->__unset($load);
-                $links[$load] = $this->buildLink($root, $pk_field, $ids);
-
-            }
-
-            if( count($links) )
-                $item->setAttribute('links', $links);
-            return $item;
-
+            return $this->serializeRelations($item);
         });
 
         if( !$is_collection )
@@ -110,6 +72,63 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
 
     }
 
+    /**
+     * Serialize intance's relations.
+     *
+     * @param \Illuminate\Support\Contracts\ArrayableInterface $instance
+     * @return array
+     */
+    public function serializeRelations(ArrayableInterface $instance) {
+
+        $links = array();
+        $side_loads = $instance->getSideLoads();
+
+        foreach($side_loads as $load) {
+
+            if($instance->{$load} instanceof Collection) {
+                // we build link to ids of a model.
+                // e.g, /api/v1/books?ids=1,2,3
+                $value = $instance->{$load}->take($this->page_limit);
+
+                if($this->isEmptyOrNull($value)) {
+                    $instance->__unset($load);
+                    continue;
+                }
+
+                $root = $value->first()->getRoot();
+                $pk_field = str_plural($value->first()->getKeyName());
+                $ids = $value->modelKeys();
+
+            } else {
+                // otherwise the result is an id. e.g: 2
+                if( $value = $instance->{$load} ) {
+                    $root = $value->getRoot();
+                    $pk_field = $value->getKeyName();
+                    $ids = array($value->getKey());
+                }
+
+            }
+
+            $instance->__unset($load);
+            $links[$load] = $this->buildLink($root, $pk_field, $ids);
+
+        }
+
+        if( count($links) )
+            $instance->setAttribute('links', $links);
+
+        return $instance;
+
+    }
+
+    /**
+     * Build the link to resource.
+     *
+     * @param string $root
+     * @param string $pk_field
+     * @param array $ids
+     * @return string
+     */
     public function buildLink($root, $pk_field, $ids) {
 
         return $this->api_prefix . '/' . $root . '?' . $pk_field . '=' . implode(',', $ids);
