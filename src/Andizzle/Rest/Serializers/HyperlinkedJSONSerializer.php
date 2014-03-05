@@ -85,11 +85,12 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
 
         foreach($side_loads as $load) {
 
-            if($instance->{$load} instanceof Collection && $this->isEmptyOrNull($instance))
+            $relation = $instance->{$load};
+            $instance->__unset($load);
+            if($this->isEmptyOrNull($relation))
                 continue;
 
-            $links[$load] = $this->buildLink($instance->{$load});
-            $instance->__unset($load);
+            $links[$load] = $this->buildLink($relation);
 
         }
 
