@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Andizzle\Rest\Relations\BelongsToManySelf;
 
 
-class RESTModel extends Model {
+abstract class RESTModel extends Model {
 
     public $root = '';
     protected $sideLoads = array();
@@ -54,7 +54,7 @@ class RESTModel extends Model {
     /**
      * Get sideLoads attributes
      *
-     * @return RESTModel
+     * @return array
      */
     public function getWith() {
 
@@ -77,7 +77,7 @@ class RESTModel extends Model {
     /**
      * Get sideLoads attributes
      *
-     * @return RESTModel
+     * @return array
      */
     public function getSideLoads() {
 

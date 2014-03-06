@@ -2,14 +2,14 @@
 
 namespace Andizzle\Rest\Controllers;
 
-use App;
-use REST;
-use Serializer;
+use Illuminate\Support\Facades\App;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Collection;
+use Andizzle\Rest\Facades\RestServerFacade as REST;
+use Andizzle\Rest\Facades\SerializerFacade as Serializer;
 
 
 abstract class RESTController extends Controller {
