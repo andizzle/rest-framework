@@ -2,8 +2,8 @@
 
 namespace Andizzle\Rest\Controllers;
 
-use Illuminate\Support\Facades\App;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;

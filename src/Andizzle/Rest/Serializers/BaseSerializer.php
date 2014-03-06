@@ -2,10 +2,10 @@
 
 namespace Andizzle\Rest\Serializers;
 
-use REST;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Contracts\ArrayableInterface;
+use Andizzle\Rest\Facades\RestServerFacade as REST;
 
 
 class BaseSerializer extends Serializer implements SerializerInterface {

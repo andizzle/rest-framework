@@ -2,7 +2,6 @@
 
 namespace Andizzle\Rest\Serializers;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Contracts\ArrayableInterface;
 
 
