@@ -88,6 +88,10 @@ abstract class RESTController extends Controller {
     public function createResponse($route, $request, $response) {
 
         $original_content = $response->getOriginalContent();
+
+        if(!$original_content)
+            return;
+
         $result = Serializer::serialize($original_content, $this->root, $this->serialize_with_relation);
         $response->setContent(Serializer::dehydrate($result));
 
@@ -102,7 +106,7 @@ abstract class RESTController extends Controller {
      */
     public function preprocessRequest($route, $request) {
 
-        $input = REST::convertCase($request->all());
+        $input = REST::convertCase($request->all(), 'snakeCase');
         $input = $this->handleRequest($input);
         $request->replace($input);
 
