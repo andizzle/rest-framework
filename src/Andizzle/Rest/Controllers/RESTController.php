@@ -17,10 +17,12 @@ abstract class RESTController extends Controller {
     protected $root = '';
     protected $serializer = null;
     protected $serialize_with_relation = true;
+    protected $validation_form = '';
 
     protected $auth_filters = array();
     protected $request_filters = array(
-        '@preprocessRequest'
+        '@preprocessRequest',
+        '@validateRequest'
     );
     protected $response_filters = array(
         '@createResponse'
@@ -109,6 +111,28 @@ abstract class RESTController extends Controller {
         $input = REST::convertCase($request->all(), 'snakeCase');
         $input = $this->handleRequest($input);
         $request->replace($input);
+
+    }
+
+    /**
+     * Validate request and filter out extra parameters
+     *
+     * @param $route
+     * @param $request
+     * @return void
+     */
+    public function validateRequest($route, $request) {
+
+        if( !$this->validation_form )
+            return;
+
+        $form = App::make($this->validation_form);
+        $validate = $form->getAction($route)->validate($request);
+
+        // if the validation fails, return an error response
+        if($validate->fails()) {
+
+        }
 
     }
 
