@@ -25,6 +25,11 @@ class RESTModel extends Model {
 
     }
 
+    /**
+     * Get the root of model for the payload
+     *
+     * @return string
+     */
     public function getRoot() {
 
         if( $this->root )

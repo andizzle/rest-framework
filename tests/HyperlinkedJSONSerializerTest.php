@@ -42,7 +42,12 @@ class HyperlinkedJSONSerializerTest extends PHPUnit_Framework_TestCase {
         $fooobj = new RESTModelStub;
         $fooobj->id = 1;
         $fooobj->root = 'roots';
+
+        $collection = new Collection;
+        $collection->add($fooobj);
         $this->assertEquals('api/v1/roots/1', $serializer->buildLink($fooobj));
+        $this->assertEquals('api/v1/roots?ids=1', $serializer->buildLink($collection));
+        
     }
 
 }
