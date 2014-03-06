@@ -8,6 +8,7 @@ use Illuminate\Support\Contracts\ArrayableInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Builder;
 use Andizzle\Rest\Relations\BelongsToManySelf;
 
 
@@ -183,5 +184,59 @@ class RESTModel extends Model {
         return new BelongsToManySelf($query, $this, $table, $foreignKey, $otherKey, $relation);
     }
 
+    /**
+     * Perform a lookup base on inputs
+     *
+     * @param array $args
+     * @param optional $columns
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public static function lookUp(array $args, $columns = array('*')) {
+
+        $instance = new static;
+        $lookup_query = $instance->buildLookUpQuery($args);
+        return $lookup_query->get($columns);
+
+    }
+
+    /**
+     * Build a lookup query which loops through all lookup functions
+     *
+     * @param $methods
+     * @return Illuminate\Database\Eloquent\Builder $query
+     */
+    public function buildLookupQuery($methods = array()) {
+
+        $lookup_query = $this->newQuery();
+
+        foreach($methods as $by => $value) {
+
+            $method = 'lookUpBy' . studly_case($by);
+            if( !method_exists($this, $method) )
+                continue;
+
+            $lookup_query = $this->{$method}($lookup_query, $value);
+
+        }
+
+        return $lookup_query;
+
+    }
+
+    /**
+     * Build a query to select by ids
+     *
+     * @param Illuminate\Database\Eloquent\Builder $query
+     * @param $ids
+     * @return Illuminate\Database\Eloquent\Builder $query
+     */
+    public function lookUpByIds(Builder $query, $ids) {
+
+        if( is_string($ids) )
+            $ids = explode(',', $ids);
+
+        return $query->whereIn('id', $ids);
+
+    }
 
 }
