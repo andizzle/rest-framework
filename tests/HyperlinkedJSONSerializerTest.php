@@ -53,8 +53,8 @@ class HyperlinkedJSONSerializerTest extends PHPUnit_Framework_TestCase {
         $collection->push($fooobj);
         $obj->setRelation('foos', $collection);
         $serializer = new HyperlinkedJSONSerializer;
-        $serializer->setURLOverrides(array('foos' => 1));
-        $this->assertEquals(array('fred' => array('links' => array('foos' => 1))), $serializer->serialize($obj, 'fred'));
+        $serializer->setURLOverrides(array('foos' => 'fredId=1'));
+        $this->assertEquals(array('fred' => array('links' => array('foos' => 'api/v1/roots?fredId=1'))), $serializer->serialize($obj, 'fred'));
 
     }
 

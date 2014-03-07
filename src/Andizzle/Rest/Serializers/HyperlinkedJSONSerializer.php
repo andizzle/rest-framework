@@ -105,7 +105,7 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
                 continue;
 
             if( array_key_exists($load, $this->url_overrides) )
-                $links[$load] = $this->url_overrides[$load];
+                $links[$load] = $this->buildLink($relation, $this->url_overrides[$load]);
             else
                 $links[$load] = $this->buildLink($relation);
 
@@ -122,11 +122,11 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
      * Build the link to resource.
      *
      * @param string $root
-     * @param string $pk_field
+     * @param string $key_field
      * @param array $ids
      * @return string
      */
-    public function buildLink($instance) {
+    public function buildLink($instance, $override = null) {
 
         $link = '';
         $is_collection = true;
@@ -144,11 +144,17 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
         }
 
         $root = $instance->first()->getRoot();
-        $pk_field = str_plural($instance->first()->getKeyName());
-        $ids = $instance->modelKeys();
+
+        $ids = array();
+        if( !$override ) {
+            $key_field = str_plural($instance->first()->getKeyName());
+            $ids = $instance->modelKeys();
+        } else {
+            return $this->api_prefix . '/' . $root . '?' . $override;
+        }
 
         if( $is_collection )
-            return $this->api_prefix . '/' . $root . '?' . $pk_field . '=' . implode(',', $ids);
+            return $this->api_prefix . '/' . $root . '?' . $key_field . '=' . implode(',', $ids);
 
         return $this->api_prefix . '/' . $root . '/' . implode(',', $ids);
 
