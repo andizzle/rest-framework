@@ -12,11 +12,25 @@ use Andizzle\Rest\Facades\RestServerFacade as REST;
 class HyperlinkedJSONSerializer extends BaseSerializer {
 
     protected $api_prefix = '';
+    protected $url_overrides = array();
 
     public function __construct() {
 
         $this->page_limit = Config::get('andizzle/rest-framework::page_limit');
         $this->api_prefix = REST::getApiPrefix();
+
+    }
+
+    /**
+     * Set the url override for the serializer instnace.
+     *
+     * @param array $urls
+     * @return Andizzle\Rest\Serializers\HyperlinkedJSONSerializer
+     */
+    public function setURLOverrides(array $urls) {
+
+        $this->url_overrides = $urls;
+        return $this;
 
     }
 
@@ -90,7 +104,10 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
             if($this->isEmptyOrNull($relation))
                 continue;
 
-            $links[$load] = $this->buildLink($relation);
+            if( array_key_exists($load, $this->url_overrides) )
+                $links[$load] = $this->url_overrides[$load];
+            else
+                $links[$load] = $this->buildLink($relation);
 
         }
 
