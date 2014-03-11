@@ -29,7 +29,7 @@ class BaseSerializer extends Serializer implements SerializerInterface {
      * @param boolean $with_relations
      * @return Andizzle\Rest\Serializers\BaseSerializer
      */
-    public function setWithRelations(boolean $with_relations) {
+    public function setWithRelations($with_relations) {
 
         $this->with_relations = $with_relations;
         return $this;
