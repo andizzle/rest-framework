@@ -133,7 +133,7 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
 
         if($instance instanceof Collection) {
 
-            $instance = $instance->unique()->take($this->page_limit);
+            $instance = $instance->unique();
 
         } else {
 
