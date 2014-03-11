@@ -16,6 +16,7 @@ class JSONSerializer extends BaseSerializer {
     public function __construct() {
 
         $this->page_limit = Config::get('andizzle/rest-framework::page_limit');
+        $this->embed_relations = Config::get('andizzle/rest-framework::serializer.embed-relations');
 
     }
 
@@ -37,8 +38,12 @@ class JSONSerializer extends BaseSerializer {
         $root = $this->getRoot($instance, $root);
 
         if( $this->with_relations ) {
-            $relationship = $this->serializeRelations($instance);
+
+            if( $this->embed_relations )
+                $relationship = $this->serializeRelations($instance);
+
             $serialized_data[$root] = $this->serializeKeys($instance)->toArray();
+
         }
 
         return array_merge($serialized_data, $relationship);

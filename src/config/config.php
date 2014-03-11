@@ -7,7 +7,8 @@ return array(
     'page_limit' => 20,
     'sideload_limit' => 1,
     'serializer' => array(
-        'model' => 'Andizzle\Rest\Serializers\Serializer'
+        'model' => 'Andizzle\Rest\Serializers\Serializer',
+        'embed-relations' => false
     ),
     'authorization' => array(
         'provider' => ''
