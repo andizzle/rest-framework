@@ -23,20 +23,20 @@ class JSONSerializer extends BaseSerializer {
      * Serialize instance to json ready array.
      *
      * @param \Illuminate\Support\Contracts\ArrayableInterface $instance
-     * @param boolean $withRelations
+     * @param string $root
      * @return array
      */
-    public function serialize(ArrayableInterface $instance, $root, $withRelations = true, $limit = null) {
+    public function serialize(ArrayableInterface $instance, $root, $limit = null) {
 
         $relationship = array();
 
         if( $limit )
             $this->page_limit = $limit;
 
-        $serialized_data = parent::serialize($instance, $root, $withRelations);
+        $serialized_data = parent::serialize($instance, $root);
         $root = $this->getRoot($instance, $root);
 
-        if( $withRelations ) {
+        if( $this->with_relations ) {
             $relationship = $this->serializeRelations($instance);
             $serialized_data[$root] = $this->serializeKeys($instance)->toArray();
         }
@@ -127,7 +127,7 @@ class JSONSerializer extends BaseSerializer {
      * @param \Illuminate\Database\Eloquent\Collection $instance
      * @return array
      */
-    public function collectRelations(Collection $instance) {
+    private function collectRelations(Collection $instance) {
 
         $sub_result = array();
         // This is the magic function where we process all
@@ -177,7 +177,7 @@ class JSONSerializer extends BaseSerializer {
      * @param array $result
      * @return array
      */
-    public function mergeRelations(array $result) {
+    private function mergeRelations(array $result) {
 
         foreach( $this->merges as $key => $merge_to ) {
             if( isset($result[$key]) ) {

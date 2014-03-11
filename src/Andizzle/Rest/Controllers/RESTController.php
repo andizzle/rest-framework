@@ -92,7 +92,7 @@ abstract class RESTController extends Controller {
         if(!$original_content || is_array($original_content))
             return;
 
-        $result = Serializer::serialize($original_content, $this->root, $this->serialize_with_relation);
+        $result = Serializer::serialize($original_content, $this->root);
         $response->setContent(Serializer::dehydrate($result));
 
     }

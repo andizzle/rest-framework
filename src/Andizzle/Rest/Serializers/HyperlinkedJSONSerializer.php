@@ -38,20 +38,20 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
      * Serialize instance to json ready array.
      *
      * @param \Illuminate\Support\Contracts\ArrayableInterface $instance
-     * @param boolean $withRelations
+     * @param string $root
      * @return array
      */
-    public function serialize(ArrayableInterface $instance, $root, $withRelations = true, $limit = null) {
+    public function serialize(ArrayableInterface $instance, $root, $limit = null) {
 
         $relationship = array();
 
         if( $limit )
             $this->page_limit = $limit;
 
-        $serialized_data = parent::serialize($instance, $root, $withRelations);
+        $serialized_data = parent::serialize($instance, $root);
         $root = $this->getRoot($instance, $root);
 
-        if( $withRelations )
+        if( $this->with_relations )
             $serialized_data[$root] = $this->serializeKeys($instance)->toArray();
 
         return array_merge($serialized_data, $relationship);
