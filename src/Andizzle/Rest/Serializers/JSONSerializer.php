@@ -20,6 +20,30 @@ class JSONSerializer extends BaseSerializer {
     }
 
     /**
+     * Get the merges attribute.
+     *
+     * @return array
+     */
+    public function getMerges() {
+
+        return $this->with_relations;
+        
+    }
+
+    /**
+     * Set the merges attribtue
+     *
+     * @param boolean $merges
+     * @return Andizzle\Rest\Serializers\BaseSerializer
+     */
+    public function setMerges($merges) {
+
+        $this->merges = $merges;
+        return $this;
+
+    }
+
+    /**
      * Serialize instance to json ready array.
      *
      * @param \Illuminate\Support\Contracts\ArrayableInterface $instance
@@ -69,17 +93,18 @@ class JSONSerializer extends BaseSerializer {
 
             foreach($side_loads as $load) {
 
-                if($item->{$load} instanceof Collection)
-                    // If is a collection then the result is a list of
-                    // id. e.g: [1, 2, 3]
-                    $item->setRelation($load, Collection::make($item->{$load}->unique()->modelKeys()));
+                $relation = $item->{$load};
+                $item->__unset($load);
 
-                else
-                    // otherwise the result is an id. e.g: 2
-                    if( $value = $item->{$load} ) {
-                        $item->__unset($load);
-                        $item->setAttribute($load, $value->getKey());
-                    }
+                if(!$this->isEmptyOrNull($relation))
+                    if($relation instanceof Collection)
+                        // If is a collection then the result is a list of
+                        // id. e.g: [1, 2, 3]
+                        $item->setRelation($load, Collection::make($relation->unique()->modelKeys()));
+
+                    else
+                        // otherwise the result is an id. e.g: 2
+                        $item->setAttribute($load, $relation->getKey());
 
             }
 
@@ -154,7 +179,7 @@ class JSONSerializer extends BaseSerializer {
                         $rel = new Collection;
                         $item_relation = $rel->add($item_relation);
                     } else {
-                        $item_relation = $item_relation;
+                        $item_relation = $item_relation->unique();
                     }
 
                     if( array_key_exists($key, $sub_result) )
