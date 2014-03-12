@@ -16,7 +16,6 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
 
     public function __construct() {
 
-        $this->page_limit = Config::get('andizzle/rest-framework::page_limit');
         $this->api_prefix = REST::getApiPrefix();
 
     }
@@ -41,12 +40,9 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
      * @param string $root
      * @return array
      */
-    public function serialize(ArrayableInterface $instance, $root, $limit = null) {
+    public function serialize(ArrayableInterface $instance, $root) {
 
         $relationship = array();
-
-        if( $limit )
-            $this->page_limit = $limit;
 
         $serialized_data = parent::serialize($instance, $root);
         $root = $this->getRoot($instance, $root);

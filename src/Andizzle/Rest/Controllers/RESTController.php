@@ -15,6 +15,9 @@ use Andizzle\Rest\Facades\SerializerFacade as Serializer;
 abstract class RESTController extends Controller {
 
     protected $root = '';
+    protected $page = 1;
+    protected $per_page = 0;
+    protected $per_page_max = 0;
     protected $serializer = null;
     protected $serialize_with_relation = true;
 
@@ -33,6 +36,9 @@ abstract class RESTController extends Controller {
      * @return void
      */
     public function __construct() {
+
+        $this->per_page = Config::get('andizzle/rest-framework::per_page');
+        $this->per_page_max = Config::get('andizzle/rest-framework::per_page_max');
 
         // if a different serializer is used, the serializer can be an
         // alias :)
@@ -92,8 +98,60 @@ abstract class RESTController extends Controller {
         if(!$original_content || is_array($original_content))
             return;
 
+        $metadata = $this->createMetadata($original_content, $request);
+        $original_content = $this->paginate($original_content, $this->page, $this->per_page);
         $result = Serializer::serialize($original_content, $this->root);
+        $result = array_merge($metadata, $result);
         $response->setContent(Serializer::dehydrate($result));
+
+    }
+
+    /**
+     * Create metadata for the response
+     *
+     * @return mix
+     */
+    public function createMetadata($result, $request) {
+
+        if( !$result instanceof Collection )
+            return array();
+
+        $metadata = array(
+            'meta' => array(
+                'total' => $result->count()
+            )
+        );
+
+        if( $page = $request->input('page') )
+            $this->page = $page;
+
+        if( $per_page = $request->input('per_page') )
+            $this->per_page = $per_page;
+
+        $this->per_page = $this->per_page > $this->per_page_max ? $this->per_page_max : $this->per_page;
+
+        array_set($metadata, 'meta.page', intval($this->page));
+        array_set($metadata, 'meta.limit', intval($this->per_page));
+
+        return $metadata;
+
+    }
+
+    /**
+     * Paginate the result.
+     *
+     * @param $result
+     * @param int $page
+     * @param int $limit
+     * @return mix
+     */
+    public function paginate($result, $page = 1, $limit = null) {
+
+        if( !$result instanceof Collection )
+            return $result;
+
+        $offset = ($page - 1) * $limit;
+        return $result->slice($offset, $limit);
 
     }
 
