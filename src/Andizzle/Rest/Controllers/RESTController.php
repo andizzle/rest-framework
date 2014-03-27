@@ -93,17 +93,19 @@ abstract class RESTController extends Controller {
      */
     public function createResponse($route, $request, $response) {
 
-        $original_content = $response->getOriginalContent();
+        if($response instanceof \Illuminate\Http\Response) {
 
-        if(!$original_content || is_array($original_content))
-            return;
+            $original_content = $response->getOriginalContent();
 
-        $metadata = $this->createMetadata($original_content, $request);
-        $original_content = $this->paginate($original_content, $this->page, $this->per_page);
-        $result = Serializer::serialize($original_content, $this->root);
-        $result = array_merge($metadata, $result);
-        $response->setContent(Serializer::dehydrate($result));
+            if(!$original_content || is_array($original_content))
+                return;
 
+            $metadata = $this->createMetadata($original_content, $request);
+            $original_content = $this->paginate($original_content, $this->page, $this->per_page);
+            $result = Serializer::serialize($original_content, $this->root);
+            $result = array_merge($metadata, $result);
+            $response->setContent(Serializer::dehydrate($result));
+        }
     }
 
     /**
