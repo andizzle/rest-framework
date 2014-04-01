@@ -147,8 +147,13 @@ abstract class RESTModel extends Model {
 
             foreach($this->pivot->getAttributes() as $key => $value) {
 
-                if( !in_array($key, $pivotKeys ) )
+                if(in_array($key, $pivotKeys))
+                    continue;
+
+                if($this->getOriginal($key))
                     $this->setAttribute($pivotPrefix . '_' .$key, $value);
+                else
+                    $this->setAttribute($key, $value);
 
             }
 
