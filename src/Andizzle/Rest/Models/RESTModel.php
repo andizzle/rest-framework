@@ -246,7 +246,7 @@ abstract class RESTModel extends Model {
         if( is_string($ids) )
             $ids = explode(',', $ids);
 
-        return $query->whereIn('id', $ids);
+        return $query->whereIn($this->getTable() . '.id', $ids);
 
     }
 
