@@ -217,7 +217,8 @@ abstract class RESTModel extends Model {
      */
     public function buildLookupQuery($methods = array()) {
 
-        $lookup_query = $this->newQuery();
+        $lookup_query = $this->newQuery()
+                             ->select($this->getTable() . '.*');
 
         foreach($methods as $by => $value) {
 
