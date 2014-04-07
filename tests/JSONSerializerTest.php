@@ -15,6 +15,7 @@ class JSONSerializerTest extends PHPUnit_Framework_TestCase {
     public function testSerializeSingle() {
 
         Config::shouldReceive('get')->with('andizzle/rest-framework::page_limit')->andReturn('5');
+        Config::shouldReceive('get')->with('andizzle/rest-framework::serializer.embed-relations')->once()->andReturn(true);
 
         $obj = new RESTModelStub;
         $obj->foo = 'bar';
@@ -31,6 +32,29 @@ class JSONSerializerTest extends PHPUnit_Framework_TestCase {
         $obj->setRelation('foos', $collection);
         $serializer = new JSONSerializer;
         $this->assertEquals(array('fred' => array('foo' => 'bar', 'foos' => array('1')), 'foos' => array(array('id' => 1))), $serializer->serialize($obj, 'fred'));
+
+    }
+
+    public function testSerializeNoEmbed() {
+
+        Config::shouldReceive('get')->with('andizzle/rest-framework::page_limit')->andReturn('5');
+        Config::shouldReceive('get')->with('andizzle/rest-framework::serializer.embed-relations')->once()->andReturn(false);
+
+        $obj = new RESTModelStub;
+        $obj->foo = 'bar';
+
+        $fooobj = new RESTModelStub;
+        $fooobj->id = 1;
+        $fooobj->root = 'roots';
+
+        $collection = new Collection;
+
+        $obj->setSideLoads(array('foos'));
+
+        $collection->push($fooobj);
+        $obj->setRelation('foos', $collection);
+        $serializer = new JSONSerializer;
+        $this->assertEquals(array('fred' => array('foo' => 'bar', 'foos' => array('1'))), $serializer->serialize($obj, 'fred'));
 
     }
 

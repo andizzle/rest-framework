@@ -15,7 +15,31 @@ class JSONSerializer extends BaseSerializer {
 
     public function __construct() {
 
-        $this->page_limit = Config::get('andizzle/rest-framework::page_limit');
+        $this->embed_relations = Config::get('andizzle/rest-framework::serializer.embed-relations');
+
+    }
+
+    /**
+     * Get the merges attribute.
+     *
+     * @return array
+     */
+    public function getMerges() {
+
+        return $this->with_relations;
+        
+    }
+
+    /**
+     * Set the merges attribtue
+     *
+     * @param boolean $merges
+     * @return Andizzle\Rest\Serializers\BaseSerializer
+     */
+    public function setMerges($merges) {
+
+        $this->merges = $merges;
+        return $this;
 
     }
 
@@ -23,22 +47,23 @@ class JSONSerializer extends BaseSerializer {
      * Serialize instance to json ready array.
      *
      * @param \Illuminate\Support\Contracts\ArrayableInterface $instance
-     * @param boolean $withRelations
+     * @param string $root
      * @return array
      */
-    public function serialize(ArrayableInterface $instance, $root, $withRelations = true, $limit = null) {
+    public function serialize(ArrayableInterface $instance, $root, $limit = null) {
 
         $relationship = array();
 
-        if( $limit )
-            $this->page_limit = $limit;
-
-        $serialized_data = parent::serialize($instance, $root, $withRelations);
+        $serialized_data = parent::serialize($instance, $root);
         $root = $this->getRoot($instance, $root);
 
-        if( $withRelations ) {
-            $relationship = $this->serializeRelations($instance);
+        if( $this->with_relations ) {
+
+            if( $this->embed_relations )
+                $relationship = $this->serializeRelations($instance);
+
             $serialized_data[$root] = $this->serializeKeys($instance)->toArray();
+
         }
 
         return array_merge($serialized_data, $relationship);
@@ -68,17 +93,18 @@ class JSONSerializer extends BaseSerializer {
 
             foreach($side_loads as $load) {
 
-                if($item->{$load} instanceof Collection)
-                    // If is a collection then the result is a list of
-                    // id. e.g: [1, 2, 3]
-                    $item->setRelation($load, Collection::make($item->{$load}->take($this->page_limit)->modelKeys()));
+                $relation = $item->{$load};
+                $item->__unset($load);
 
-                else
-                    // otherwise the result is an id. e.g: 2
-                    if( $value = $item->{$load} ) {
-                        $item->__unset($load);
-                        $item->setAttribute($load, $value->getKey());
-                    }
+                if(!$this->isEmptyOrNull($relation))
+                    if($relation instanceof Collection)
+                        // If is a collection then the result is a list of
+                        // id. e.g: [1, 2, 3]
+                        $item->setRelation($load, Collection::make($relation->unique()->modelKeys()));
+
+                    else
+                        // otherwise the result is an id. e.g: 2
+                        $item->setAttribute($load, $relation->getKey());
 
             }
 
@@ -127,7 +153,7 @@ class JSONSerializer extends BaseSerializer {
      * @param \Illuminate\Database\Eloquent\Collection $instance
      * @return array
      */
-    public function collectRelations(Collection $instance) {
+    private function collectRelations(Collection $instance) {
 
         $sub_result = array();
         // This is the magic function where we process all
@@ -153,7 +179,7 @@ class JSONSerializer extends BaseSerializer {
                         $rel = new Collection;
                         $item_relation = $rel->add($item_relation);
                     } else {
-                        $item_relation = $item_relation->take($this->page_limit);
+                        $item_relation = $item_relation->unique();
                     }
 
                     if( array_key_exists($key, $sub_result) )
@@ -177,7 +203,7 @@ class JSONSerializer extends BaseSerializer {
      * @param array $result
      * @return array
      */
-    public function mergeRelations(array $result) {
+    private function mergeRelations(array $result) {
 
         foreach( $this->merges as $key => $merge_to ) {
             if( isset($result[$key]) ) {

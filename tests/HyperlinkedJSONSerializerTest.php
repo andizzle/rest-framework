@@ -35,7 +35,31 @@ class HyperlinkedJSONSerializerTest extends PHPUnit_Framework_TestCase {
 
     }
 
+    public function testOverrideLink() {
+
+        Config::shouldReceive('get')->with('andizzle/rest-framework::page_limit')->andReturn('5');
+        REST::shouldReceive('getApiPrefix')->andReturn('api/v1');
+
+        $obj = new RESTModelStub;
+
+        $fooobj = new RESTModelStub;
+        $fooobj->id = 1;
+        $fooobj->root = 'roots';
+
+        $collection = new Collection;
+
+        $obj->setSideLoads(array('foos'));
+
+        $collection->push($fooobj);
+        $obj->setRelation('foos', $collection);
+        $serializer = new HyperlinkedJSONSerializer;
+        $serializer->setURLOverrides(array('foos' => 'fredId=1'));
+        $this->assertEquals(array('fred' => array('links' => array('foos' => 'api/v1/roots?fredId=1'))), $serializer->serialize($obj, 'fred'));
+
+    }
+
     public function testBuildLink() {
+
         Config::shouldReceive('get')->with('andizzle/rest-framework::page_limit')->andReturn('5');
         REST::shouldReceive('getApiPrefix')->andReturn('api/v1');
         $serializer = new HyperlinkedJSONSerializer;

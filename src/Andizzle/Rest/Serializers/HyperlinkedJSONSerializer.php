@@ -12,11 +12,24 @@ use Andizzle\Rest\Facades\RestServerFacade as REST;
 class HyperlinkedJSONSerializer extends BaseSerializer {
 
     protected $api_prefix = '';
+    protected $url_overrides = array();
 
     public function __construct() {
 
-        $this->page_limit = Config::get('andizzle/rest-framework::page_limit');
         $this->api_prefix = REST::getApiPrefix();
+
+    }
+
+    /**
+     * Set the url override for the serializer instnace.
+     *
+     * @param array $urls
+     * @return Andizzle\Rest\Serializers\HyperlinkedJSONSerializer
+     */
+    public function setURLOverrides(array $urls) {
+
+        $this->url_overrides = $urls;
+        return $this;
 
     }
 
@@ -24,20 +37,17 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
      * Serialize instance to json ready array.
      *
      * @param \Illuminate\Support\Contracts\ArrayableInterface $instance
-     * @param boolean $withRelations
+     * @param string $root
      * @return array
      */
-    public function serialize(ArrayableInterface $instance, $root, $withRelations = true, $limit = null) {
+    public function serialize(ArrayableInterface $instance, $root) {
 
         $relationship = array();
 
-        if( $limit )
-            $this->page_limit = $limit;
-
-        $serialized_data = parent::serialize($instance, $root, $withRelations);
+        $serialized_data = parent::serialize($instance, $root);
         $root = $this->getRoot($instance, $root);
 
-        if( $withRelations )
+        if( $this->with_relations )
             $serialized_data[$root] = $this->serializeKeys($instance)->toArray();
 
         return array_merge($serialized_data, $relationship);
@@ -90,7 +100,10 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
             if($this->isEmptyOrNull($relation))
                 continue;
 
-            $links[$load] = $this->buildLink($relation);
+            if( array_key_exists($load, $this->url_overrides) )
+                $links[$load] = $this->buildLink($relation, $this->url_overrides[$load]);
+            else
+                $links[$load] = $this->buildLink($relation);
 
         }
 
@@ -105,18 +118,18 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
      * Build the link to resource.
      *
      * @param string $root
-     * @param string $pk_field
+     * @param string $key_field
      * @param array $ids
      * @return string
      */
-    public function buildLink($instance) {
+    public function buildLink($instance, $override = null) {
 
         $link = '';
         $is_collection = true;
 
         if($instance instanceof Collection) {
 
-            $instance = $instance->unique()->take($this->page_limit);
+            $instance = $instance->unique();
 
         } else {
 
@@ -127,11 +140,17 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
         }
 
         $root = $instance->first()->getRoot();
-        $pk_field = str_plural($instance->first()->getKeyName());
-        $ids = $instance->modelKeys();
+
+        $ids = array();
+        if( !$override ) {
+            $key_field = str_plural($instance->first()->getKeyName());
+            $ids = $instance->modelKeys();
+        } else {
+            return $this->api_prefix . '/' . $root . '?' . $override;
+        }
 
         if( $is_collection )
-            return $this->api_prefix . '/' . $root . '?' . $pk_field . '=' . implode(',', $ids);
+            return $this->api_prefix . '/' . $root . '?' . $key_field . '=' . implode(',', $ids);
 
         return $this->api_prefix . '/' . $root . '/' . implode(',', $ids);
 

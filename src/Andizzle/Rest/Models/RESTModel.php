@@ -147,8 +147,13 @@ abstract class RESTModel extends Model {
 
             foreach($this->pivot->getAttributes() as $key => $value) {
 
-                if( !in_array($key, $pivotKeys ) )
+                if(in_array($key, $pivotKeys))
+                    continue;
+
+                if($this->getOriginal($key))
                     $this->setAttribute($pivotPrefix . '_' .$key, $value);
+                else
+                    $this->setAttribute($key, $value);
 
             }
 
@@ -212,7 +217,9 @@ abstract class RESTModel extends Model {
      */
     public function buildLookupQuery($methods = array()) {
 
-        $lookup_query = $this->newQuery();
+        $lookup_query = $this->newQuery()
+                             ->select($this->getTable() . '.*')
+                             ->groupBy($this->getTable() . '.' . $this->getKeyName());
 
         foreach($methods as $by => $value) {
 
@@ -240,7 +247,7 @@ abstract class RESTModel extends Model {
         if( is_string($ids) )
             $ids = explode(',', $ids);
 
-        return $query->whereIn('id', $ids);
+        return $query->whereIn($this->getTable() . '.id', $ids);
 
     }
 
