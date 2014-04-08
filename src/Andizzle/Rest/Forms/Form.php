@@ -23,11 +23,17 @@ abstract class Form implements FormInterface {
 
         $rules = !empty($this->rules) ? $this->rules : $rules;
 
-        return Validator::make(
+        $result = Validator::make(
             $request->all(),
             $rules,
             $this->message
         );
+
+        // if the validation fails, return an error response
+        if($result->fails())
+            throw with(new InputValidationException)->setMessage($result->messages()->all())->setCode();
+
+        return true
 
     }
 

@@ -192,8 +192,15 @@ abstract class RESTController extends Controller {
         $result = $form->validate($request, $form->getRules($route));
 
         // if the validation fails, return an error response
-        if($result->fails())
-            throw with(new InputValidationException)->setMessage($result->messages()->all())->setCode();
+        try {
+
+            $form->validate($request, $form->getRules($route));
+
+        } catch(InputValidationException $e) {
+
+            return Response::json(array('status' => 'failed', 'errors' => explode('|', $e->getMessage())), $e->getCode());
+
+        }
 
     }
 
