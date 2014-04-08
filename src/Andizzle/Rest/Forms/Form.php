@@ -33,7 +33,7 @@ abstract class Form implements FormInterface {
         if($result->fails())
             throw with(new InputValidationException)->setMessage($result->messages()->all())->setCode();
 
-        return true
+        return true;
 
     }
 
