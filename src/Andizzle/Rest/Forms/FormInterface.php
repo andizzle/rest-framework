@@ -1,19 +1,15 @@
 <?php
 
+namespace Andizzle\Rest\Forms;
+
+use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
+
+
 interface FormInterface {
 
-    public function validate();
+    public function validate($request, array $rules = array());
 
-    public function makeRule();
-
-    public function indexRules();
-
-    public function showRules();
-
-    public function postRules();
-
-    public function putRules();
-
-    public function deleteRules();
+    public function getRules($route);
 
 }

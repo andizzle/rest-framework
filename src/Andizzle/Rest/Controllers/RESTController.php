@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Collection;
+use Andizzle\Rest\Exceptions\InputValidationException;
 use Andizzle\Rest\Facades\RestServerFacade as REST;
 use Andizzle\Rest\Facades\SerializerFacade as Serializer;
 
@@ -180,6 +181,7 @@ abstract class RESTController extends Controller {
      * @param $route
      * @param $request
      * @return void
+     * @throws InputValidationException
      */
     public function validateRequest($route, $request) {
 
@@ -187,12 +189,11 @@ abstract class RESTController extends Controller {
             return;
 
         $form = App::make($this->validation_form);
-        $validate = $form->getAction($route)->validate($request);
+        $result = $form->validate($request, $form->getRules($route));
 
         // if the validation fails, return an error response
-        if($validate->fails()) {
-
-        }
+        if($result->fails())
+            throw with(new InputValidationException)->setMessage($result->messages()->all())->setCode();
 
     }
 
