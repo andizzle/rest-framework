@@ -3,7 +3,7 @@
 namespace Andizzle\Rest\Exceptions;
 
 
-class ModelNotFoundException extends \RuntimeException {
+class ModelNotFoundException extends \RuntimeException implements RESTExceptionInterface {
 
     /**
      * Name of the affected Eloquent model.

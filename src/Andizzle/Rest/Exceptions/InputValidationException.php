@@ -3,7 +3,7 @@
 namespace Andizzle\Rest\Exceptions;
 
 
-class InputValidationException extends \RuntimeException {
+class InputValidationException extends \RuntimeException implements RESTExceptionInterface {
 
     public function setMessage($messages) {
 
