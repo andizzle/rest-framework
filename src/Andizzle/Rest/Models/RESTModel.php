@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
 use Andizzle\Rest\Relations\BelongsToManySelf;
+use Andizzle\Rest\Exceptions\ModelNotFoundException as Model404Exception;
 
 
 abstract class RESTModel extends Model {
@@ -98,7 +99,7 @@ abstract class RESTModel extends Model {
 
         } catch(ModelNotFoundException $e) {
 
-            throw new Exception(sprintf("No %s Found.", class_basename(get_called_class())));
+            throw with(new Model404Exception)->setModel(get_called_class())->setCode();
 
         }
 
