@@ -189,7 +189,6 @@ abstract class RESTController extends Controller {
             return;
 
         $form = App::make($this->validation_form);
-        $result = $form->validate($request, $form->getRules($route));
 
         // if the validation fails, return an error response
         try {
