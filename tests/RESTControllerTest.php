@@ -18,9 +18,6 @@ class RESTControllerTest extends PHPUnit_Framework_TestCase {
         m::close();
     }
 
-    /**
-     * @expectedException Andizzle\Rest\Exceptions\InputValidationException
-     */
     public function testFormValidation() {
 
         $route = m::mock('Route');
