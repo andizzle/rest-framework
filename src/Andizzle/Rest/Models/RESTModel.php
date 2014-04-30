@@ -142,7 +142,7 @@ abstract class RESTModel extends Model {
 
         if( $this->pivot ) {
 
-            $pivotPrefix =  str_singular(preg_replace('^(.*)_^', '', $this->pivot->getTable()));
+            $pivotPrefix =  str_singular(trim(preg_replace('^(' . $this->getTable() . '|' . str_singular($this->getTable()) . ')^', '', $this->pivot->getTable()), '_'));
 
             $pivotKeys = array($this->pivot->getKeyName(), $this->pivot->getForeignKey(), $this->pivot->getOtherKey());
 
