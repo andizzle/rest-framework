@@ -133,6 +133,18 @@ abstract class RESTModel extends Model {
 
     }
 
+
+    /**
+     * Get an attribute array of all arrayable attributes.
+     *
+     * @return array
+     */
+    protected function getArrayableAttributes() {
+
+        return $this->getArrayableItems(array_merge($this->attributes, $this->getMutatedAttributes()));
+
+    }
+
     /**
      * Put the pivot attributes of a relation to the actual object.
      *
