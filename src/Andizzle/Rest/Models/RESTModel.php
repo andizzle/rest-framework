@@ -141,7 +141,10 @@ abstract class RESTModel extends Model {
      */
     protected function getArrayableAttributes() {
 
-        return $this->getArrayableItems(array_merge($this->attributes, $this->getMutatedAttributes()));
+        foreach($this->getMutatedAttributes() as $key) {
+            $this->attributes[$key] = NULL;
+        }
+        return parent::getArrayableAttributes();
 
     }
 
