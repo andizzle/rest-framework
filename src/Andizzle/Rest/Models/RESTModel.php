@@ -133,7 +133,6 @@ abstract class RESTModel extends Model {
 
     }
 
-
     /**
      * Get an attribute array of all arrayable attributes.
      *
@@ -142,9 +141,11 @@ abstract class RESTModel extends Model {
     protected function getArrayableAttributes() {
 
         $arrayable_attributes = parent::getArrayableAttributes();
-        foreach($this->getMutatedAttributes() as $key) {
+
+        foreach($this->getArrayableItems($this->getMutatedAttributes()) as $key) {
             $arrayable_attributes[$key] = $this->{$key};
         }
+
         return $arrayable_attributes;
 
     }
