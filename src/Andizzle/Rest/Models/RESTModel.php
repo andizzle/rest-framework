@@ -142,7 +142,7 @@ abstract class RESTModel extends Model {
 
         $arrayable_attributes = parent::getArrayableAttributes();
 
-        foreach($this->getArrayableItems($this->getMutatedAttributes()) as $key) {
+        foreach($this->getArrayableItems(array_flip($this->getMutatedAttributes())) as $key => $value) {
             $arrayable_attributes[$key] = $this->{$key};
         }
 
