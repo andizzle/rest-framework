@@ -134,6 +134,38 @@ abstract class RESTModel extends Model {
     }
 
     /**
+     * Convert the model's attributes to an array.
+     *
+     * @return array
+     */
+    public function attributesToArray() {
+
+        $attributes = parent::attributesToArray();
+        foreach($attributes as $key => $value) {
+
+            if(is_numeric($value))
+                $attributes[$key] = (float) $value;
+
+        }
+
+        return $attributes;
+
+    }
+
+    /**
+     * Get an attribute from the model.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function getAttribute($key) {
+
+        $value = parent::getAttribute($key);
+        return is_numeric($value) ? (float) $value : $value;
+
+    }
+
+    /**
      * Get an attribute array of all arrayable attributes.
      *
      * @return array
