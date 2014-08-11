@@ -63,7 +63,7 @@ class BaseSerializer extends Serializer implements SerializerInterface {
                 if( !$this->with_relations )
                     $item->setHidden(array_merge($item->getHidden(), $item->getSideLoads()));
 
-                return $item->load($item->getSideLoads());
+                return $item;
 
             });
 

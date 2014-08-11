@@ -27,7 +27,7 @@ class JSONSerializer extends BaseSerializer {
     public function getMerges() {
 
         return $this->with_relations;
-        
+
     }
 
     /**
@@ -94,17 +94,23 @@ class JSONSerializer extends BaseSerializer {
             foreach($side_loads as $load) {
 
                 $relation = $item->{$load};
-                $item->__unset($load);
 
-                if(!$this->isEmptyOrNull($relation))
+                if(!$this->isEmptyOrNull($relation)) {
+
+                    $item->__unset($load);
                     if($relation instanceof Collection)
                         // If is a collection then the result is a list of
                         // id. e.g: [1, 2, 3]
                         $item->setRelation($load, Collection::make($relation->unique()->modelKeys()));
-
                     else
                         // otherwise the result is an id. e.g: 2
                         $item->setAttribute($load, $relation->getKey());
+
+                } else {
+
+                    $item->setHidden(array_merge($item->getHidden(), [$load]));
+
+                }
 
             }
 
