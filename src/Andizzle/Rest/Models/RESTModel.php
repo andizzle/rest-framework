@@ -144,7 +144,7 @@ abstract class RESTModel extends Model {
         foreach($attributes as $key => $value) {
 
             if(is_numeric($value))
-                $attributes[$key] = (float) $value;
+                $attributes[$key] = is_int($value) ? (int) $value : (float) $value;
 
         }
 
@@ -161,7 +161,9 @@ abstract class RESTModel extends Model {
     public function getAttribute($key) {
 
         $value = parent::getAttribute($key);
-        return is_numeric($value) ? (float) $value : $value;
+        if(is_numeric($value))
+            return is_int($value) ? (int) $value : (float) $value;
+        return $value;
 
     }
 
