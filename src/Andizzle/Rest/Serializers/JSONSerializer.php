@@ -82,8 +82,7 @@ class JSONSerializer extends BaseSerializer {
         $result = new Collection;
         if( !$this->isCollection($instance) ) {
             $is_collection = False;
-            $collection = new Collection;
-            $instance = $collection->add($instance);
+            $instance = new \Illuminate\Database\Eloquent\Collection([$instance]);
         }
 
         $instance->transform(function($item)
