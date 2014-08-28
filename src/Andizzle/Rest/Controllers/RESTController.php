@@ -22,6 +22,7 @@ abstract class RESTController extends Controller {
     protected $serializer = null;
     protected $serialize_with_relation = true;
     protected $validation_form = '';
+    protected $extra = [];
 
     protected $auth_filters = array();
     protected $request_filters = array(
@@ -106,7 +107,7 @@ abstract class RESTController extends Controller {
             $metadata = $this->createMetadata($original_content, $request);
             $original_content = $this->paginate($original_content, $this->page, $this->per_page);
             $result = Serializer::serialize($original_content, $this->root);
-            $result = array_merge($metadata, $result);
+            $result = array_merge($metadata, $result, $this->extra);
             $response->setContent(Serializer::dehydrate($result));
         }
     }
