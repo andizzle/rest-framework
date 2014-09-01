@@ -203,7 +203,7 @@ abstract class RESTModel extends Model {
                     continue;
 
                 if($this->getOriginal($key))
-                    $this->setAttribute($pivotPrefix . '_' .$key, $value);
+                    $this->setAttribute($pivotPrefix . '_' .$key, $this->pivot->getAttribute($key));
                 else
                     $this->setAttribute($key, $value);
 
