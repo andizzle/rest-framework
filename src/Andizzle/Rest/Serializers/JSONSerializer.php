@@ -88,13 +88,13 @@ class JSONSerializer extends BaseSerializer {
         $instance->transform(function($item)
         {
             // clean up current relations;
+            $side_loads = $item->getSideLoads();
             foreach($item->newFromBuilder()->getSideLoads() as $relation) {
 
-                $item->__unset($relation);
+                if(!in_array($relation, $side_loads))
+                    $item->__unset($relation);
 
             }
-
-            $side_loads = $item->getSideLoads();
 
             foreach($side_loads as $load) {
 
