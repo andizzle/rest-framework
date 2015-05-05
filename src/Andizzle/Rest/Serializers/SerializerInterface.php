@@ -2,12 +2,12 @@
 
 namespace Andizzle\Rest\Serializers;
 
-use Illuminate\Support\Contracts\ArrayableInterface;
+use Illuminate\Contracts\Support\Arrayable;
 
 
 interface SerializerInterface {
 
-    public function serialize(ArrayableInterface $instance, $root);
+    public function serialize(Arrayable $instance, $root);
 
     public function dehydrate(array $data);
 

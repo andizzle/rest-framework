@@ -4,7 +4,7 @@ namespace Andizzle\Rest\Serializers;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Contracts\ArrayableInterface;
+use Illuminate\Contracts\Support\Arrayable;
 use Andizzle\Rest\Facades\RestServerFacade as REST;
 
 
@@ -20,7 +20,7 @@ class BaseSerializer extends Serializer implements SerializerInterface {
     public function getWithRelations() {
 
         return $this->with_relations;
-        
+
     }
 
     /**
@@ -43,7 +43,7 @@ class BaseSerializer extends Serializer implements SerializerInterface {
      * @param string $root
      * @return array
      */
-    public function serialize(ArrayableInterface $instance, $root) {
+    public function serialize(Arrayable $instance, $root) {
 
         $relationship = array();
 
@@ -84,7 +84,7 @@ class BaseSerializer extends Serializer implements SerializerInterface {
 
     }
 
-    public function getRoot(ArrayableInterface $instance, $root) {
+    public function getRoot(Arrayable $instance, $root) {
 
         return $this->isCollection($instance) ? str_plural($root) : $root;
     }

@@ -17,7 +17,7 @@ class RestServiceProvider extends ServiceProvider {
 
     public function boot() {
 
-        $this->package('andizzle/rest-framework', 'andizzle/rest-framework');
+        //$this->package('andizzle/rest-framework', 'andizzle/rest-framework');
 
     }
 
@@ -50,7 +50,7 @@ class RestServiceProvider extends ServiceProvider {
      */
     public function provides() {
 
-        return array('rest.server', 'rest.serializer');
+        return ['rest.server', 'rest.serializer'];
 
     }
 

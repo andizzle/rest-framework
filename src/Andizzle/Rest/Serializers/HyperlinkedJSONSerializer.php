@@ -5,7 +5,7 @@ namespace Andizzle\Rest\Serializers;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Contracts\ArrayableInterface;
+use Illuminate\Contracts\Support\Arrayable;
 use Andizzle\Rest\Facades\RestServerFacade as REST;
 
 
@@ -36,11 +36,11 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
     /**
      * Serialize instance to json ready array.
      *
-     * @param \Illuminate\Support\Contracts\ArrayableInterface $instance
+     * @param \Illuminate\Support\Contracts\Arrayable $instance
      * @param string $root
      * @return array
      */
-    public function serialize(ArrayableInterface $instance, $root) {
+    public function serialize(Arrayable $instance, $root) {
 
         $relationship = array();
 
@@ -57,10 +57,10 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
     /**
      * Serialize all toManys to keys
      *
-     * @param ArrayableInterface $instance
+     * @param Arrayable $instance
      * @return $instance
      */
-    public function serializeKeys(ArrayableInterface $instance) {
+    public function serializeKeys(Arrayable $instance) {
 
         $is_collection = True;
         $result = new Collection;
@@ -85,10 +85,10 @@ class HyperlinkedJSONSerializer extends BaseSerializer {
     /**
      * Serialize intance's relations.
      *
-     * @param \Illuminate\Support\Contracts\ArrayableInterface $instance
+     * @param \Illuminate\Support\Contracts\Arrayable $instance
      * @return array
      */
-    public function serializeRelations(ArrayableInterface $instance) {
+    public function serializeRelations(Arrayable $instance) {
 
         $links = array();
         $side_loads = $instance->getSideLoads();

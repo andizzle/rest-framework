@@ -4,7 +4,7 @@ namespace Andizzle\Rest\Serializers;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Contracts\ArrayableInterface;
+use Illuminate\Contracts\Support\Arrayable;
 
 
 abstract class Serializer implements SerializerInterface {
@@ -41,7 +41,7 @@ abstract class Serializer implements SerializerInterface {
      * @param boolean $withRelations
      * @return array
      */
-    public function serialize(ArrayableInterface $instance, $root, $withRelations = true) {}
+    public function serialize(Arrayable $instance, $root, $withRelations = true) {}
 
     /**
      * Dehydrate the result, do any additional action you need before
