@@ -82,7 +82,7 @@ class JSONSerializer extends BaseSerializer {
         $result = new Collection;
         if( !$this->isCollection($instance) ) {
             $is_collection = False;
-            $instance = \Illuminate\Database\Eloquent\Collection::make($instance);
+            $instance = \Illuminate\Database\Eloquent\Collection::make([$instance]);
         }
 
         $instance->transform(function($item)
@@ -141,7 +141,7 @@ class JSONSerializer extends BaseSerializer {
         $result = new Collection;
 
         if( !$this->isCollection($instance) )
-            $instance = Collection::make($instance);
+            $instance = Collection::make([$instance]);
 
         $sub_result = $this->collectRelations($instance);
         $sub_result = $this->mergeRelations($sub_result);
