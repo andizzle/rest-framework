@@ -35,12 +35,4 @@ class RestServerTest extends PHPUnit_Framework_TestCase {
 
     }
 
-    public function testErrorResponse() {
-
-        $server = new RestServer();
-        $response = $server->errorResponse(400, array('error' => 'error_message'));
-        $this->assertEquals('{"errors":[{"error":"error_message"}]}', $response->getContent());
-
-    }
-
 }
