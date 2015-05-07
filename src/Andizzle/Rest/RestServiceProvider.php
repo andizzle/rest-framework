@@ -15,12 +15,6 @@ class RestServiceProvider extends ServiceProvider {
      */
     protected $defer = false;
 
-    public function boot() {
-
-        //$this->package('andizzle/rest-framework', 'andizzle/rest-framework');
-
-    }
-
     /**
      * Register the service provider.
      *
@@ -28,18 +22,17 @@ class RestServiceProvider extends ServiceProvider {
      */
     public function register() {
 
-        $app = $this->app;
-        $app['rest.server'] = $app->share(function ($app)
+        $this->app->singleton('Andizzle\Rest\RestServer', function ($app)
         {
             $case = $app['config']['andizzle/rest-framework::case'];
             return new RestServer($case);
         });
 
-        $app['rest.serializer'] = $app->share(function ($app)
-        {
-            $model = $app['config']['andizzle/rest-framework::serializer.model'];
-            return new $model;
-        });
+        // $this->app->singleton('Andizzle\Rest\RestServer', function ($app)
+        // {
+        //     $model = $app['config']['andizzle/rest-framework::serializer.model'];
+        //     return new $model;
+        // });
 
     }
 
@@ -50,7 +43,7 @@ class RestServiceProvider extends ServiceProvider {
      */
     public function provides() {
 
-        return ['rest.server', 'rest.serializer'];
+        return ['Andizzle\Rest\RestServer'];
 
     }
 

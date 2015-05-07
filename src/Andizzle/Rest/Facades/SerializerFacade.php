@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Andizzle\Rest\Facades;
 
@@ -15,6 +15,6 @@ class SerializerFacade extends Facade {
      */
     protected static function getFacadeAccessor()
     {
-        return 'rest.serializer';
+        return 'Andizzle\Rest\Serializers\BaseSerializer';
     }
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Andizzle\Rest\Facades;
 
@@ -15,7 +15,7 @@ class RestServerFacade extends Facade {
      */
     protected static function getFacadeAccessor() {
 
-        return 'rest.server';
+        return 'Andizzle\Rest\RestServer';
 
     }
 
