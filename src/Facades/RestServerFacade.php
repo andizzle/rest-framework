@@ -12,7 +12,7 @@ class RestServerFacade extends Facade {
      * @codeCoverageIgnore
      */
     protected static function getFacadeAccessor() {
-        return 'Andizzle\Rest\RestServer';
+        return 'rest.server';
     }
 
 }

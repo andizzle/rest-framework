@@ -1,7 +1,6 @@
 <?php namespace Andizzle\Rest\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\Facades\Config;
 
 class SerializerFacade extends Facade {
 
@@ -12,7 +11,6 @@ class SerializerFacade extends Facade {
      * @codeCoverageIgnore
      */
     protected static function getFacadeAccessor() {
-        $model = Config::get('rest.serializer.model');
-        return new $model;
+        return 'rest.serializer';
     }
 }
