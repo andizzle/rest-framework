@@ -1,6 +1,4 @@
-<?php
-
-namespace Andizzle\Rest\Facades;
+<?php namespace Andizzle\Rest\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
@@ -14,9 +12,7 @@ class RestServerFacade extends Facade {
      * @codeCoverageIgnore
      */
     protected static function getFacadeAccessor() {
-
         return 'Andizzle\Rest\RestServer';
-
     }
 
 }

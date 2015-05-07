@@ -1,9 +1,7 @@
-<?php
-
-namespace Andizzle\Rest\Facades;
+<?php namespace Andizzle\Rest\Facades;
 
 use Illuminate\Support\Facades\Facade;
-
+use Illuminate\Support\Facades\Config;
 
 class SerializerFacade extends Facade {
 

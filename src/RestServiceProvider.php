@@ -34,15 +34,14 @@ class RestServiceProvider extends ServiceProvider {
     public function register() {
         $this->app->singleton('rest.server', function ($app)
         {
-            $case = $app['config']['andizzle/rest-framework::case'];
-            return new RestServer($case);
+            return new RestServer;
         });
 
-        // $this->app->singleton('Andizzle\Rest\RestServer', function ($app)
-        // {
-        //     $model = $app['config']['andizzle/rest-framework::serializer.model'];
-        //     return new $model;
-        // });
+        $this->app->singleton('rest.serializer', function ($app)
+        {
+            $model = $app['config']->get('rest.serializer.model');
+            return new $model;
+        });
     }
 
     /**
