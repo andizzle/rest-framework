@@ -42,7 +42,6 @@ class RestServiceProvider extends ServiceProvider {
             $model = $app['config']->get('rest.serializer.model');
             return new $model;
         });
-
     }
 
     /**
