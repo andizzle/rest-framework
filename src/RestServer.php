@@ -10,18 +10,6 @@ use Illuminate\Support\Facades\Response;
 class RestServer {
 
     /**
-     * Setup default output case.
-     *
-     * @param string $case
-     * @return void
-     */
-    public function __construct($case = 'snakeCase') {
-
-        $this->outputCase = $case;
-
-    }
-
-    /**
      * Figure out the api prefix base on incoming request.
      *
      * @return string
@@ -73,9 +61,7 @@ class RestServer {
      */
     public function convertCase(array $input, $case = null) {
 
-        if( $case == null )
-            $case = $this->outputCase;
-
+        $case = Config::get('andizzle/rest-framework::case');
         return $this->{$case . 'Input'}($input);
 
     }

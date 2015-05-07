@@ -1,6 +1,4 @@
-<?php
-
-namespace Andizzle\Rest;
+<?php namespace Andizzle\Rest;
 
 use Andizzle\Rest\RestServer;
 use Illuminate\Support\ServiceProvider;
@@ -16,13 +14,25 @@ class RestServiceProvider extends ServiceProvider {
     protected $defer = false;
 
     /**
+     * Bootstrap the configuration
+     *
+     * @return void
+     */
+    public function boot() {
+        $config = realpath(__DIR__ . '/../config/config.php');
+
+        $this->mergeConfigFrom($config, 'rest-framework');
+
+        $this->publishes([$config => config_path('rest.php')], 'config');
+    }
+
+    /**
      * Register the service provider.
      *
      * @return void
      */
     public function register() {
-
-        $this->app->singleton('Andizzle\Rest\RestServer', function ($app)
+        $this->app->singleton('rest.server', function ($app)
         {
             $case = $app['config']['andizzle/rest-framework::case'];
             return new RestServer($case);
@@ -33,7 +43,6 @@ class RestServiceProvider extends ServiceProvider {
         //     $model = $app['config']['andizzle/rest-framework::serializer.model'];
         //     return new $model;
         // });
-
     }
 
     /**
@@ -42,9 +51,7 @@ class RestServiceProvider extends ServiceProvider {
      * @return array
      */
     public function provides() {
-
-        return ['Andizzle\Rest\RestServer'];
-
+        return ['rest.server', 'rest.serializer'];
     }
 
 }
