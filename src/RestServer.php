@@ -18,8 +18,8 @@ class RestServer {
 
         $prefix = '';
 
-        $api_versions = Config::get('andizzle/rest-framework::deprecated') ?: array();
-        array_push($api_versions, Config::get('andizzle/rest-framework::version'));
+        $api_versions = Config::get('rest.deprecated') ?: array();
+        $api_versions[] = Config::get('rest.version');
 
         $segments = Request::segments();
         foreach( $segments as $segment ) {
@@ -61,8 +61,8 @@ class RestServer {
      */
     public function convertCase(array $input, $case = null) {
 
-        $case = Config::get('andizzle/rest-framework::case');
-        return $this->{$case . 'Input'}($input);
+        $case = $case ?: Config::get('rest.case');
+        return $this->convertInput($input, $case);
 
     }
 

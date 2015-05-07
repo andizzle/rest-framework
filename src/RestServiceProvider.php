@@ -21,7 +21,7 @@ class RestServiceProvider extends ServiceProvider {
     public function boot() {
         $config = realpath(__DIR__ . '/../config/config.php');
 
-        $this->mergeConfigFrom($config, 'rest-framework');
+        $this->mergeConfigFrom($config, 'rest');
 
         $this->publishes([$config => config_path('rest.php')], 'config');
     }

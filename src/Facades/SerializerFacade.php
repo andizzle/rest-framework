@@ -13,8 +13,8 @@ class SerializerFacade extends Facade {
      * @return string
      * @codeCoverageIgnore
      */
-    protected static function getFacadeAccessor()
-    {
-        return 'Andizzle\Rest\Serializers\BaseSerializer';
+    protected static function getFacadeAccessor() {
+        $model = Config::get('rest.serializer.model');
+        return new $model;
     }
 }
