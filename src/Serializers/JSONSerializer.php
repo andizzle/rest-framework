@@ -10,12 +10,13 @@ use Andizzle\Rest\Facades\RestServerFacade as REST;
 
 class JSONSerializer extends BaseSerializer {
 
+    protected $with_relations = true;
     protected $merges = array();
     protected $sideload_limit = 0;
 
     public function __construct() {
 
-        $this->embed_relations = Config::get('andizzle/rest-framework::serializer.embed-relations');
+        $this->embed_relations = Config::get('rest.serializer.embed-relations');
 
     }
 
@@ -88,32 +89,32 @@ class JSONSerializer extends BaseSerializer {
         $instance->transform(function($item)
         {
             // clean up current relations;
-            $side_loads = $item->getSideLoads();
-            foreach($item->newFromBuilder()->getSideLoads() as $relation) {
+            $relations = $item->getRelations();
+            /* foreach($item->newFromBuilder()->getRelations() as $relation) { */
 
-                if(!in_array($relation, $side_loads))
-                    $item->__unset($relation);
+            /*     if(!in_array($relation, $side_loads)) */
+            /*         $item->__unset($relation); */
 
-            }
+            /* } */
 
-            foreach($side_loads as $load) {
+            foreach($relations as $relation => $value) {
 
-                $relation = $item->{$load};
+                if(!$this->isEmptyOrNull($value)) {
 
-                if(!$this->isEmptyOrNull($relation)) {
-
-                    $item->__unset($load);
-                    if($relation instanceof Collection)
+                    if($value instanceof Collection) {
                         // If is a collection then the result is a list of
                         // id. e.g: [1, 2, 3]
-                        $item->setRelation($load, Collection::make($relation->unique()->modelKeys()));
-                    else
+                        $item->setRelation($relation, Collection::make($value->unique()->modelKeys()));
+                    } else {
+                        $item->__unset($relation);
                         // otherwise the result is an id. e.g: 2
-                        $item->setAttribute($load, $relation->getKey());
+                        $item->setAttribute($relation, $value->getKey());
+                    }
 
                 } else {
 
-                    $item->setHidden(array_merge($item->getHidden(), [$load]));
+                    // hide none / empty values
+                    $item->setHidden(array_merge($item->getHidden(), [$relation]));
 
                 }
 
