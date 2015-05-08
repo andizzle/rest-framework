@@ -41,8 +41,8 @@ abstract class RESTController extends Controller {
      */
     public function __construct() {
 
-        $this->per_page = Config::get('andizzle/rest-framework::per_page');
-        $this->per_page_max = Config::get('andizzle/rest-framework::per_page_max');
+        $this->per_page = Config::get('rest.per_page');
+        $this->per_page_max = Config::get('rest.per_page_max');
 
         // if a different serializer is used, the serializer can be an
         // alias :)

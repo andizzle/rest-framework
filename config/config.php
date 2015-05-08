@@ -3,8 +3,8 @@
 return [
     'version' => 'v1',
     'case' => 'camelCase',
-    'page_limit' => 20,
-    'page_limit_max' => 200,
+    'per_page' => 20,
+    'per_page_max' => 2000,
     'sideload_limit' => 1,
     'serializer' => [
         'model' => 'Andizzle\Rest\Serializers\BaseSerializer',
