@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Response;
 
 class RestServer {
 
+    protected $meta = [];
+
     /**
      * Figure out the api prefix base on incoming request.
      *
@@ -31,6 +33,30 @@ class RestServer {
         }
 
         return $prefix;
+
+    }
+
+    public function getMeta($key) {
+
+        return array_get($this->meta, $key);
+
+    }
+
+    public function setMeta($key = '', $value = NULL) {
+
+        array_set($this->meta, $key, $value);
+        return $this->meta;
+
+    }
+
+    public function setRequestMeta() {
+
+        $this->meta['page'] = (int) Request::input('page') ?: 1;
+
+        if((int) Request::input('per_page') && (int) Request::input('per_page') < Config::get('rest.per_page_max'))
+            $this->meta['per_page'] = (int) Request::input('per_page');
+        else
+            $this->meta['per_page'] = Config::get('rest.per_page');
 
     }
 

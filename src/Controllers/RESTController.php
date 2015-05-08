@@ -120,24 +120,16 @@ abstract class RESTController extends Controller {
     public function createMetadata($result, $request) {
 
         if( !$result instanceof Collection )
-            return array();
+            return [];
 
-        $metadata = array(
-            'meta' => array(
-                'total' => $result->count()
-            )
-        );
+        $metadata = [
+            'meta' => [
+                'total' => REST::getMeta('total')
+            ]
+        ];
 
-        if( $page = $request->input('page') )
-            $this->page = $page;
-
-        if( $per_page = $request->input('per_page') )
-            $this->per_page = $per_page;
-
-        $this->per_page = $this->per_page > $this->per_page_max ? $this->per_page_max : $this->per_page;
-
-        array_set($metadata, 'meta.page', intval($this->page));
-        array_set($metadata, 'meta.limit', intval($this->per_page));
+        array_set($metadata, 'meta.page', REST::getMeta('page'));
+        array_set($metadata, 'meta.limit', REST::getMeta('per_page'));
 
         return $metadata;
 
@@ -170,6 +162,7 @@ abstract class RESTController extends Controller {
      */
     public function preprocessRequest($route, $request) {
 
+        REST::setRequestMeta();
         $input = REST::convertCase($request->all(), 'snakeCase');
         $input = $this->handleRequest($input);
         $request->replace($input);
@@ -198,7 +191,7 @@ abstract class RESTController extends Controller {
 
         } catch(InputValidationException $e) {
 
-            return Response::json(array('status' => 'failed', 'errors' => explode('|', $e->getMessage())), $e->getCode());
+            return Response::json(['status' => 'failed', 'errors' => explode('|', $e->getMessage())], $e->getCode());
 
         }
 
@@ -225,10 +218,10 @@ abstract class RESTController extends Controller {
      */
     public static function errorResponse($code, $message = '') {
 
-        $error = array(
+        $error = [
             'status' => 'failed',
             'message' => $message
-        );
+        ];
         return Response::json($error, $code);
 
     }

@@ -11,9 +11,10 @@ return [
         'embed-relations' => false
     ],
     'authorization' => [
-        'provider' => ''
+        'provider' => NULL
     ],
     'authentication' => [
-        'provider' => ''
-    ]
+        'provider' => NULL
+    ],
+    'session_prefix' => 'rest'
 ];

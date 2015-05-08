@@ -4,11 +4,13 @@ namespace Andizzle\Rest\Models;
 
 use Exception;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Contracts\ArrayableInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
+use Andizzle\Rest\Facades\RestServerFacade as REST;
 use Andizzle\Rest\Relations\BelongsToManySelf;
 use Andizzle\Rest\Exceptions\ModelNotFoundException as Model404Exception;
 
@@ -257,7 +259,11 @@ abstract class RESTModel extends Model {
 
         $instance = new static;
         $lookup_query = $instance->buildLookUpQuery($args);
-        return $lookup_query->get($columns);
+        $lookup_result = $lookup_query->get($columns);
+
+        $total = DB::select(DB::raw('SELECT FOUND_ROWS() AS total;'))[0]->total;
+        REST::setMeta('total', $total);
+        return $lookup_result;
 
     }
 
@@ -270,8 +276,12 @@ abstract class RESTModel extends Model {
     public function buildLookupQuery($methods = array()) {
 
         $lookup_query = $this->newQuery()
-                             ->select($this->getTable() . '.*')
+                             ->select(DB::raw('SQL_CALC_FOUND_ROWS ' . $this->getTable() . '.*'))
                              ->groupBy($this->getTable() . '.' . $this->getKeyName());
+
+        if(REST::getMeta('page') && REST::getMeta('per_page'))
+            $lookup_query->skip((REST::getMeta('page') - 1) * REST::getMeta('per_page'))
+                         ->limit(REST::getMeta('per_page'));
 
         foreach($methods as $by => $value) {
 
