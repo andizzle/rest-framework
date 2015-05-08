@@ -255,14 +255,16 @@ abstract class RESTModel extends Model {
      * @param optional $columns
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public static function lookUp(array $args, $columns = array('*')) {
+    public static function lookUp(array $args, $columns = ['*'], $with = []) {
 
         $instance = new static;
-        $lookup_query = $instance->buildLookUpQuery($args);
+        $lookup_query = $instance->buildLookUpQuery($args, $with);
+
         $lookup_result = $lookup_query->get($columns);
 
         $total = DB::select(DB::raw('SELECT FOUND_ROWS() AS total;'))[0]->total;
         REST::setMeta('total', $total);
+
         return $lookup_result;
 
     }
@@ -273,7 +275,7 @@ abstract class RESTModel extends Model {
      * @param $methods
      * @return Illuminate\Database\Eloquent\Builder $query
      */
-    public function buildLookupQuery($methods = array()) {
+    public function buildLookupQuery($methods = [], $with = []) {
 
         $lookup_query = $this->newQuery()
                              ->select(DB::raw('SQL_CALC_FOUND_ROWS ' . $this->getTable() . '.*'))
@@ -282,6 +284,18 @@ abstract class RESTModel extends Model {
         if(REST::getMeta('page') && REST::getMeta('per_page'))
             $lookup_query->skip((REST::getMeta('page') - 1) * REST::getMeta('per_page'))
                          ->limit(REST::getMeta('per_page'));
+
+        foreach($with as $relation) {
+
+            $method = 'with' . studly_case($relation);
+            if( method_exists($this, $method) )
+                $lookup_query = $this->{$method}($lookup_query);
+            elseif(method_exists($this, $relation))
+                $lookup_query = $lookup_query->with($relation);
+            else
+                continue;
+
+        }
 
         foreach($methods as $by => $value) {
 
