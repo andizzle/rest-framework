@@ -1,6 +1,4 @@
-<?php
-
-namespace Andizzle\Rest\Models;
+<?php namespace Andizzle\Rest\Models;
 
 use Exception;
 use Illuminate\Support\Facades\Config;
@@ -9,7 +7,7 @@ use Illuminate\Support\Contracts\ArrayableInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Database\Eloquent\Builder;
+use Andizzle\Rest\Builder\Builder;
 use Andizzle\Rest\Facades\RestServerFacade as REST;
 use Andizzle\Rest\Relations\BelongsToManySelf;
 use Andizzle\Rest\Exceptions\ModelNotFoundException as Model404Exception;
@@ -120,6 +118,18 @@ abstract class RESTModel extends Model {
     public static function cast($instance) {
 
         return $instance;
+
+    }
+
+    /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param  \Illuminate\Database\Query\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
+    public function newEloquentBuilder($query) {
+
+        return new Builder($query);
 
     }
 
@@ -259,11 +269,8 @@ abstract class RESTModel extends Model {
 
         $instance = new static;
         $lookup_query = $instance->buildLookUpQuery($args, $with);
-
+        $lookup_query->setRetrieveCount(true);
         $lookup_result = $lookup_query->get($columns);
-
-        $total = DB::select(DB::raw('SELECT FOUND_ROWS() AS total;'))[0]->total;
-        REST::setMeta('total', $total);
 
         return $lookup_result;
 
