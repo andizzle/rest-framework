@@ -69,11 +69,11 @@ class RestServer {
      */
     public function errorResponse($code, $message = '') {
 
-        $error = array(
-            'errors' => array(
+        $error = [
+            'errors' => [
                 $message
-            )
-        );
+            ]
+        ];
         return Response::json($error, $code);
 
     }
