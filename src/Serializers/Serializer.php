@@ -38,10 +38,10 @@ abstract class Serializer implements SerializerInterface {
      * Serialize instance to json ready array.
      *
      * @param \Illuminate\Support\Contracts\ArrayableInterface $instance
-     * @param boolean $withRelations
+     * @param string $root
      * @return array
      */
-    public function serialize(Arrayable $instance, $root, $withRelations = true) {}
+    abstract public function serialize(Arrayable $instance, $root);
 
     /**
      * Dehydrate the result, do any additional action you need before
@@ -50,6 +50,6 @@ abstract class Serializer implements SerializerInterface {
      * @param array $data
      * return array
      */
-    public function dehydrate(array $data) {}
+    abstract public function dehydrate(array $data);
 
 }
