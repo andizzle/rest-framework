@@ -14,24 +14,12 @@ class RestServiceProvider extends ServiceProvider {
     protected $defer = false;
 
     /**
-     * Bootstrap the configuration
-     *
-     * @return void
-     */
-    public function boot() {
-        $config = realpath(__DIR__ . '/../config/config.php');
-
-        $this->mergeConfigFrom($config, 'rest');
-
-        $this->publishes([$config => config_path('rest.php')], 'config');
-    }
-
-    /**
      * Register the service provider.
      *
      * @return void
      */
     public function register() {
+
         $this->app->singleton('rest.server', function ($app)
         {
             return new RestServer;
@@ -42,6 +30,21 @@ class RestServiceProvider extends ServiceProvider {
             $model = $app['config']->get('rest.serializer.model');
             return new $model;
         });
+    }
+
+    /**
+     * Bootstrap the configuration
+     *
+     * @return void
+     */
+    public function boot($stack) {
+
+        $config = realpath(__DIR__ . '/../config/config.php');
+
+        $this->mergeConfigFrom($config, 'rest');
+
+        $this->publishes([$config => config_path('rest.php')], 'config');
+
     }
 
     /**
