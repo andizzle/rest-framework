@@ -1,6 +1,4 @@
-<?php
-
-namespace Andizzle\Rest\Controllers;
+<?php namespace Andizzle\Rest\Controllers;
 
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\App;
@@ -24,14 +22,14 @@ abstract class RESTController extends Controller {
     protected $validation_form = '';
     protected $extra = [];
 
-    protected $auth_filters = array();
-    protected $request_filters = array(
+    protected $auth_filters = [];
+    protected $request_filters = [
         '@preprocessRequest',
         '@validateRequest'
-    );
-    protected $response_filters = array(
+    ];
+    protected $response_filters = [
         '@createResponse'
-    );
+    ];
 
     /**
      * Create our rest controller, define the serializer, add in

@@ -11,6 +11,7 @@ use Andizzle\Rest\Facades\RestServerFacade as REST;
 
 class HyperlinkedJSONSerializer extends BaseSerializer {
 
+    protected $with_relations = true;
     protected $api_prefix = '';
     protected $url_overrides = array();
 
