@@ -17,7 +17,7 @@
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-             <directory>./src/Andizzle/Rest</directory>
+             <directory>./src</directory>
         </whitelist>
     </filter>
     <logging>
