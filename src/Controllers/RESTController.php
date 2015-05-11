@@ -105,7 +105,6 @@ abstract class RESTController extends Controller {
                 return;
 
             $metadata = $this->createMetadata($original_content, $request);
-            $original_content = $this->paginate($original_content, $this->page, $this->per_page);
             $result = Serializer::serialize($original_content, $this->root);
             $result = array_merge($metadata, $result, $this->extra);
             $response->setContent(Serializer::dehydrate($result));
@@ -132,24 +131,6 @@ abstract class RESTController extends Controller {
         array_set($metadata, 'meta.limit', REST::getMeta('per_page'));
 
         return $metadata;
-
-    }
-
-    /**
-     * Paginate the result.
-     *
-     * @param $result
-     * @param int $page
-     * @param int $limit
-     * @return mix
-     */
-    public function paginate($result, $page = 1, $limit = null) {
-
-        if( !$result instanceof Collection )
-            return $result;
-
-        $offset = ($page - 1) * $limit;
-        return $result->slice($offset, $limit);
 
     }
 
