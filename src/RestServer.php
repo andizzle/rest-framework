@@ -53,7 +53,7 @@ class RestServer {
 
         $this->meta['page'] = (int) Request::input('page') ?: 1;
 
-        if((int) Request::input('per_page') && (int) Request::input('per_page') < Config::get('rest.per_page_max'))
+        if((int) Request::input('per_page') && (int) Request::input('per_page') <= Config::get('rest.per_page_max'))
             $this->meta['per_page'] = (int) Request::input('per_page');
         else
             $this->meta['per_page'] = Config::get('rest.per_page');
