@@ -37,7 +37,7 @@ class RestServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function boot($stack) {
+    public function boot() {
 
         $config = realpath(__DIR__ . '/../config/config.php');
 
