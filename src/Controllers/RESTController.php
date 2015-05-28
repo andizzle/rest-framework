@@ -20,7 +20,7 @@ abstract class RESTController extends Controller {
      */
     public function __construct() {
 
-        Request::merge([
+        Request::session()->put([
             'rest.doc_root'   => $this->getRoot(),
             'rest.serializer' => $this->serializer
         ]);

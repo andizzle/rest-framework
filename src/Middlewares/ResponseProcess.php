@@ -35,8 +35,8 @@ class ResponseProcess implements Middleware{
             ]
         ];
 
-        array_set($metadata, 'meta.page', $request->input('page'));
-        array_set($metadata, 'meta.limit', $request->input('per_page'));
+        array_set($metadata, 'meta.page', (int) $request->input('page'));
+        array_set($metadata, 'meta.limit', (int) $request->input('per_page'));
 
         return $metadata;
 
@@ -60,13 +60,13 @@ class ResponseProcess implements Middleware{
             if(!$original_content || is_array($original_content))
                 return $response;
 
-            if($request->input('rest.serializer')) {
-                Serializer::swap(App::make($request->input('rest.serializer')));
+            if($request->session()->get('rest.serializer')) {
+                Serializer::swap(App::make($request->session()->get('rest.serializer')));
             }
 
             $metadata = $this->createMetadata($original_content, $request);
 
-            $result = Serializer::serialize($original_content, $request->input('rest.doc_root'));
+            $result = Serializer::serialize($original_content, $request->session()->get('rest.doc_root'));
             $result = array_merge($metadata, $result);
 
             $response->setContent(Serializer::dehydrate($result));
