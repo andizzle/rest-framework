@@ -2,6 +2,7 @@
 
 use Config;
 use Closure;
+use Illuminate\Support\Facades\App;
 use Illuminate\Http\Response;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Routing\Middleware;
@@ -59,9 +60,15 @@ class ResponseProcess implements Middleware{
             if(!$original_content || is_array($original_content))
                 return $response;
 
+            if($request->input('rest.serializer')) {
+                Serializer::swap(App::make($request->input('rest.serializer')));
+            }
+
             $metadata = $this->createMetadata($original_content, $request);
-            $result = Serializer::serialize($original_content, 'test');
+
+            $result = Serializer::serialize($original_content, $request->input('rest.doc_root'));
             $result = array_merge($metadata, $result);
+
             $response->setContent(Serializer::dehydrate($result));
 
         }

@@ -28,74 +28,10 @@ abstract class RESTController extends Controller {
      */
     public function __construct() {
 
-        // if a different serializer is used, the serializer can be an
-        // alias :)
-        if( $this->serializer ) {
-            Serializer::swap(App::make($this->serializer));
-        }
-
-    }
-
-    /**
-     * Get model root
-     *
-     * @return string
-     */
-    public function getRoot() {
-
-        return $this->root;
-
-    }
-
-    /**
-     * Set model root.
-     *
-     * @return RESTModel
-     */
-    public function setRoot($root) {
-
-        $this->root = $root;
-        return $this;
-
-    }
-
-    /**
-     * Validate request and filter out extra parameters
-     *
-     * @param $route
-     * @param $request
-     * @return void
-     * @throws InputValidationException
-     */
-    public function validateRequest($route, $request) {
-
-        if( !$this->validation_form )
-            return;
-
-        $form = App::make($this->validation_form);
-
-        // if the validation fails, return an error response
-        try {
-
-            $form->validate($request, $form->getRules($route));
-
-        } catch(InputValidationException $e) {
-
-            return Response::json(['status' => 'failed', 'errors' => explode('|', $e->getMessage())], $e->getCode());
-
-        }
-
-    }
-
-    /**
-     * Manipulate the request input and return changed result.
-     *
-     * @param array $input
-     * @return array
-     */
-    public function handleRequest(array $input) {
-
-        return $input;
+        Request::merge([
+            'rest.doc_root'   => $this->root,
+            'rest.serializer' => $this->serializer
+        ]);
 
     }
 
