@@ -17,22 +17,8 @@ abstract class RESTController extends Controller {
 
     use DispatchesCommands, ValidatesRequests;
 
-    protected $root = '';
-    protected $page = 1;
-    protected $per_page = 0;
-    protected $per_page_max = 0;
-    protected $serializer = null;
-    protected $validation_form = '';
-    protected $extra = [];
-
-    protected $auth_filters = [];
-    protected $request_filters = [
-        '@preprocessRequest',
-        '@validateRequest'
-    ];
-    protected $response_filters = [
-        '@createResponse'
-    ];
+    protected $root = NULL;
+    protected $serializer = NULL;
 
     /**
      * Create our rest controller, define the serializer, add in
@@ -42,24 +28,10 @@ abstract class RESTController extends Controller {
      */
     public function __construct() {
 
-        $this->per_page = Config::get('rest.per_page');
-        $this->per_page_max = Config::get('rest.per_page_max');
-
         // if a different serializer is used, the serializer can be an
         // alias :)
-        if( $this->serializer )
+        if( $this->serializer ) {
             Serializer::swap(App::make($this->serializer));
-
-        // here we add before filters to do auth and preprocess the
-        // request
-        $before_filters = array_merge($this->auth_filters, $this->request_filters);
-        foreach($before_filters as $before_filter) {
-            $this->beforeFilter($before_filter);
-        }
-
-        // here we add after filters to process the response
-        foreach($this->response_filters as $response_filter) {
-            $this->afterFilter($response_filter);
         }
 
     }
@@ -84,70 +56,6 @@ abstract class RESTController extends Controller {
 
         $this->root = $root;
         return $this;
-
-    }
-
-    /**
-     * Serialize the response with a serializer. This function is for
-     * after filter.
-     *
-     * @param $route
-     * @param $request
-     * @param $response
-     * @return void
-     */
-    public function createResponse($route, $request, $response) {
-
-        if($response instanceof \Illuminate\Http\Response) {
-
-            $original_content = $response->getOriginalContent();
-
-            if(!$original_content || is_array($original_content))
-                return;
-
-            $metadata = $this->createMetadata($original_content, $request);
-            $result = Serializer::serialize($original_content, $this->root);
-            $result = array_merge($metadata, $result, $this->extra);
-            $response->setContent(Serializer::dehydrate($result));
-        }
-    }
-
-    /**
-     * Create metadata for the response
-     *
-     * @return mix
-     */
-    public function createMetadata($result, $request) {
-
-        if( !$result instanceof Collection )
-            return [];
-
-        $metadata = [
-            'meta' => [
-                'total' => REST::getMeta('total')
-            ]
-        ];
-
-        array_set($metadata, 'meta.page', REST::getMeta('page'));
-        array_set($metadata, 'meta.limit', REST::getMeta('per_page'));
-
-        return $metadata;
-
-    }
-
-    /**
-     * Process the request and replace the input
-     *
-     * @param $route
-     * @param $request
-     * @return void
-     */
-    public function preprocessRequest($route, $request) {
-
-        REST::setRequestMeta();
-        $input = REST::convertCase($request->all(), 'snakeCase');
-        $input = $this->handleRequest($input);
-        $request->replace($input);
 
     }
 
