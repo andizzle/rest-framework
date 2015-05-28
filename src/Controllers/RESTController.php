@@ -18,7 +18,6 @@ abstract class RESTController extends Controller {
     protected $per_page = 0;
     protected $per_page_max = 0;
     protected $serializer = null;
-    protected $serialize_with_relation = true;
     protected $validation_form = '';
     protected $extra = [];
 
