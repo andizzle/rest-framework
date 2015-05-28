@@ -29,9 +29,22 @@ abstract class RESTController extends Controller {
     public function __construct() {
 
         Request::merge([
-            'rest.doc_root'   => $this->root,
+            'rest.doc_root'   => $this->getRoot(),
             'rest.serializer' => $this->serializer
         ]);
+
+    }
+
+    public function getRoot() {
+
+        return $this->root ?: $this->guessRoot();
+
+    }
+
+    public function guessRoot() {
+
+        $class = str_replace('Controller', '', class_basename($this));
+        return strtolower(str_singular($class));
 
     }
 
