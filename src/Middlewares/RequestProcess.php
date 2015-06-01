@@ -31,14 +31,14 @@ class RequestProcess implements Middleware{
 
     public function setupPagination(&$request) {
 
-        if($limit = $request->input('limit')) {
+        if($limit = (int) $request->input('limit')) {
             if($limit > $this->limit_max) {
                 $limit = $this->limit_max;
             }
-            $this->pagination['limit'] = $limit;
+            $this->pagination['limit'] = $limit > 0 ? $limit : 1;
         }
 
-        if($page = $request->input('page')) {
+        if($page = (int) $request->input('page')) {
             $this->pagination['page'] = $page;
         }
 

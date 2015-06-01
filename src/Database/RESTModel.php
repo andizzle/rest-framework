@@ -252,8 +252,8 @@ abstract class RESTModel extends Model {
         if($args instanceof Request) {
             $columns = explode(',', $args->input('include', '*'));
             $with    = $args->input('embed') ? explode(',', $args->input('embed')) : [];
-            $page    = (int) $args->input('page', $page);
-            $limit   = (int) $args->input('limit', $limit);
+            $page    = $args->input('page', $page);
+            $limit   = $args->input('limit', $limit);
             $args    = $args->except(['page', 'limit', 'include']);
         }
 
