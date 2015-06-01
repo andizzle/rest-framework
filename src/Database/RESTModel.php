@@ -3,13 +3,14 @@
 use ReflectionClass;
 use ArrayAccess;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Contracts\ArrayableInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Andizzle\Rest\Builder\Builder;
+use Andizzle\Rest\Database\Builder;
 use Andizzle\Rest\Facades\RestServerFacade as REST;
 use Andizzle\Rest\Relations\BelongsToManySelf;
 use Andizzle\Rest\Exceptions\ModelNotFoundException as Model404Exception;
@@ -17,30 +18,7 @@ use Andizzle\Rest\Exceptions\ModelNotFoundException as Model404Exception;
 
 abstract class RESTModel extends Model {
 
-    public $root = '';
     protected $sideLoads = array();
-
-    public function __construct(array $attributes = array()) {
-
-        parent::__construct($attributes);
-        if( !$this->root )
-            $this->root = $this->getRoot();
-
-    }
-
-    /**
-     * Get the root of model for the payload
-     *
-     * @return string
-     */
-    public function getRoot() {
-
-        if( $this->root )
-            return $this->root;
-
-        return str_plural(strtolower(class_basename(get_class($this))));
-
-    }
 
     /**
      * Set sideLoads attributes
@@ -260,16 +238,6 @@ abstract class RESTModel extends Model {
         return new BelongsToManySelf($query, $this, $table, $foreignKey, $otherKey, $relation);
     }
 
-    public function getLookUpParameters(Request $request, $parameter) {
-
-        $parameters = [];
-
-        $parameters['page'] = $request->input('page');
-        $parameters['limit'] = $request->input('limit');
-        $with = $request->input('with');
-
-    }
-
     /**
      * Perform a lookup base on inputs
      *
@@ -277,14 +245,29 @@ abstract class RESTModel extends Model {
      * @param optional $columns
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public static function lookUp(Request $request) {
+    public static function lookUp($args, $columns = ['*'], $with = [], $page = 1, $limit = NULL) {
 
         $instance = new static;
-        $lookup_query = $instance->buildLookUpQuery($args, $with);
-        $lookup_query->setRetrieveCount(true);
-        $lookup_result = $lookup_query->get($columns);
 
-        return $lookup_result;
+        if($args instanceof Request) {
+            $columns = explode(',', $args->input('include', '*'));
+            $with    = $args->input('embed') ? explode(',', $args->input('embed')) : [];
+            $page    = (int) $args->input('page', $page);
+            $limit   = (int) $args->input('limit', $limit);
+            $args    = $args->except(['page', 'limit', 'include']);
+        }
+
+        $query = $instance->buildLookUpQuery($args, $with, $page, $limit);
+        $query->setRetrieveCount(true);
+
+        $result = $query->get($columns);
+
+        $result->pagination = array_merge($result->pagination, [
+            'page'  => $page,
+            'limit' => $limit
+        ]);
+
+        return $result;
 
     }
 

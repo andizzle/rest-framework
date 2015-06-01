@@ -1,4 +1,4 @@
-<?php namespace Andizzle\Rest\Builder;
+<?php namespace Andizzle\Rest\Database;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder as BaseBuilder;
@@ -26,7 +26,6 @@ class Builder extends BaseBuilder {
 
         if($this->retrieve_count) {
             $total = DB::select(DB::raw('SELECT FOUND_ROWS() AS total;'))[0]->total;
-            REST::setMeta('total', $total);
         }
 
         // If we actually found models we will also eager load any relationships that
@@ -35,7 +34,9 @@ class Builder extends BaseBuilder {
         if (count($models) > 0)
             $models = $this->eagerLoadRelations($models);
 
-        return $this->model->newCollection($models);
+        $result = $this->model->newCollection($models);
+        $result->pagination = ['total' => $total];
+        return $result;
     }
 
 }

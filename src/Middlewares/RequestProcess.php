@@ -32,7 +32,7 @@ class RequestProcess implements Middleware{
     public function setupPagination(&$request) {
 
         if($limit = $request->input('limit')) {
-            if($limit < $this->limit_max) {
+            if($limit > $this->limit_max) {
                 $limit = $this->limit_max;
             }
             $this->pagination['limit'] = $limit;

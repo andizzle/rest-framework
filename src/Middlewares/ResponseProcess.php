@@ -30,13 +30,8 @@ class ResponseProcess implements Middleware{
             return [];
 
         $metadata = [
-            'meta' => [
-                'total' => REST::getMeta('total')
-            ]
+            'meta' => $result->pagination
         ];
-
-        array_set($metadata, 'meta.page', (int) $request->input('page'));
-        array_set($metadata, 'meta.limit', (int) $request->input('limit'));
 
         return $metadata;
 
@@ -56,6 +51,7 @@ class ResponseProcess implements Middleware{
         if($response instanceof Response) {
 
             $original_content = $response->getOriginalContent();
+
 
             if(!$original_content || is_array($original_content))
                 return $response;
