@@ -10,14 +10,14 @@ class RequestProcess implements Middleware{
     protected $case       = 'snakeCase';
     protected $pagination = [
         'page'     => 1,
-        'per_page' => 1
+        'limit'    => 1
     ];
-    protected $per_page_max = 0;
+    protected $limit_max = 0;
 
     public function __construct() {
 
-        $this->per_page_max           = Config::get('rest.per_page_max');
-        $this->pagination['per_page'] = Config::get('rest.per_page');
+        $this->limit_max           = Config::get('rest.limit_max');
+        $this->pagination['limit'] = Config::get('rest.limit');
 
     }
 
@@ -31,11 +31,11 @@ class RequestProcess implements Middleware{
 
     public function setupPagination(&$request) {
 
-        if($per_page = $request->input('per_page')) {
-            if($per_page < $this->per_page_max) {
-                $per_page = $this->per_page_max;
+        if($limit = $request->input('limit')) {
+            if($limit < $this->limit_max) {
+                $limit = $this->limit_max;
             }
-            $this->pagination['per_page'] = $per_page;
+            $this->pagination['limit'] = $limit;
         }
 
         if($page = $request->input('page')) {

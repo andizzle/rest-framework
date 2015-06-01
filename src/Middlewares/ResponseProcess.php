@@ -36,7 +36,7 @@ class ResponseProcess implements Middleware{
         ];
 
         array_set($metadata, 'meta.page', (int) $request->input('page'));
-        array_set($metadata, 'meta.limit', (int) $request->input('per_page'));
+        array_set($metadata, 'meta.limit', (int) $request->input('limit'));
 
         return $metadata;
 
