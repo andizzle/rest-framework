@@ -1,5 +1,7 @@
 <?php namespace Andizzle\Rest\Models;
 
+use ReflectionClass;
+use ArrayAccess;
 use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -258,6 +260,16 @@ abstract class RESTModel extends Model {
         return new BelongsToManySelf($query, $this, $table, $foreignKey, $otherKey, $relation);
     }
 
+    public function getLookUpParameters(Request $request, $parameter) {
+
+        $parameters = [];
+
+        $parameters['page'] = $request->input('page');
+        $parameters['limit'] = $request->input('limit');
+        $with = $request->input('with');
+
+    }
+
     /**
      * Perform a lookup base on inputs
      *
@@ -265,7 +277,7 @@ abstract class RESTModel extends Model {
      * @param optional $columns
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public static function lookUp(array $args, $columns = ['*'], $with = []) {
+    public static function lookUp(Request $request) {
 
         $instance = new static;
         $lookup_query = $instance->buildLookUpQuery($args, $with);
@@ -282,15 +294,16 @@ abstract class RESTModel extends Model {
      * @param $methods
      * @return Illuminate\Database\Eloquent\Builder $query
      */
-    public function buildLookupQuery($methods = [], $with = []) {
+    public function buildLookupQuery($methods = [], $with = [], $page = NULL, $limit = NULL) {
 
         $lookup_query = $this->newQuery()
                              ->select(DB::raw('SQL_CALC_FOUND_ROWS ' . $this->getTable() . '.*'))
                              ->groupBy($this->getTable() . '.' . $this->getKeyName());
 
-        if(REST::getMeta('page') && REST::getMeta('per_page'))
-            $lookup_query->skip((REST::getMeta('page') - 1) * REST::getMeta('per_page'))
-                         ->limit(REST::getMeta('per_page'));
+        if($page && $limit) {
+            $lookup_query->skip(($page - 1) * $limit)
+                         ->limit($limit);
+        }
 
         foreach($with as $relation) {
 
