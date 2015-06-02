@@ -24,6 +24,7 @@ class Builder extends BaseBuilder {
     public function get($columns = array('*')) {
         $models = $this->getModels($columns);
 
+        $total = NULL;
         if($this->retrieve_count) {
             $total = DB::select(DB::raw('SELECT FOUND_ROWS() AS total;'))[0]->total;
         }
@@ -35,7 +36,9 @@ class Builder extends BaseBuilder {
             $models = $this->eagerLoadRelations($models);
 
         $result = $this->model->newCollection($models);
-        $result->pagination = ['total' => $total];
+        if($total !== NULL) {
+            $result->pagination = ['total' => $total];
+        }
         return $result;
     }
 
